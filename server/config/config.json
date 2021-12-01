@@ -1,0 +1,14 @@
+{
+    "development": {
+        "MONGODB_URI": "mongodb://localhost:27017/Datta-System",
+        "JWT_SECRET": "SECRET#123",
+        "PORT": 8000,
+        "JWT_EXP": "1h"
+    },
+    "production": {
+        "MONGODB_URI": "mongodb://xxxxxxx/DB_Name",
+        "JWT_SECRET": "SECRET#123",
+        "PORT": 80,
+        "JWT_EXP": "1h"
+    }
+}

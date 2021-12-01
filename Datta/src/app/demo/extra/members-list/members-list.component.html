@@ -1,0 +1,220 @@
+<div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <input type="text" class="form-control w-50" id="search" aria-describedby="searchHelp" placeholder="Search" [(ngModel)]="search">
+          <small id="searchHelp" class="form-text text-muted">Search for Member by Class Name, First Name, Last Name, Other Name or Phone Number</small>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="btn-group mb-4 mr-2" ngbDropdown [placement]="'bottom-left'">
+          <button class="btn btn-outline-dark" ngbDropdownToggle type="button">Export</button>
+          <div ngbDropdownMenu>
+            <a class="dropdown-item" href="javascript:">Excel</a>
+            <a class="dropdown-item" href="javascript:">Pdf</a>
+          </div>
+        </div>
+        <button class="btn btn-danger mb-4" type="button" (click)="open(content)">Add Members</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <app-card [hidHeader]="true">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <!-- <th scope="col">#</th> -->
+                  <th scope="col">First Name</th>
+                  <th scope="col">Last Name</th>
+                  <th scope="col">Other Name</th>
+                  <th scope="col">Gender</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Digital Address</th>
+                  <th scope="col">Phone Number</th>
+                  <th scope="col">Date of Birth</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody *ngFor="let mem of memberService.members | memFilter: search">
+              <tr class="unread">
+                <!-- <td><img class="rounded-circle" style="width:40px;" src="assets/images/user/avatar-1.jpg" alt="activity-user"></td> -->
+                <td>
+                  <h6 class="mb-1">{{mem.firstname}}</h6>
+                </td>
+                <td>
+                  <h6 class="mb-1">{{mem.lastname}}</h6>
+                </td>
+                <td>
+                  <h6 class="mb-1">{{mem.othername}}</h6>
+                </td>
+                <td>
+                  <h6 class="mb-1">{{mem.gender}}</h6>
+                </td>
+                <td>
+                  <h6 class="mb-1">{{mem.email}}</h6>
+                </td>
+                <td>
+                  <h6 class="mb-1">{{mem.digitaladdress}}</h6>
+                </td>
+                <td>
+                  <h6 class="mb-1">{{mem.phonenumber}}</h6>
+                </td>
+                <td>
+                  <h6 class="mb-1">{{mem.dateofbirth | date: "yyyy/M/dd"}}</h6>
+                </td>
+                <td>
+                  <a href="javascript:" class="label theme-bg2 text-white f-12" (click)="onEdit(content, mem)"><i class="feather icon-edit-2"></i></a>
+                  <a href="javascript:" class="label theme-bg text-white f-12" (click)="onDelete(mem._id)"><i class="feather icon-trash"></i></a>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </app-card>
+        </div>
+    </div>
+  
+    <ng-template #content let-modal>
+      <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Members Form</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form [formGroup]="memberForm" (ngSubmit)="memberFormSubmit()">
+              
+                <input type="hidden" name="classname" class="form-control" formControlName="classname">
+                <input type="hidden" name="_id" class="form-control" formControlName="_id">
+    
+              <div class="form-group">
+                <label for="firstname">First Name</label>
+                <div class="input-group">
+                  <input id="firstname" class="form-control" placeholder="First Name" name="firstname" type="text" minlength="4" formControlName="firstname" [ngClass]="(memberForm.get('firstname').touched || memberForm.get('firstname').dirty) && memberForm.get('firstname').errors ? 'is-invalid' : ''" required>
+                  <div *ngIf="memberForm.get('firstname').invalid && (memberForm.get('firstname').dirty || memberForm.get('firstname').touched)" class="invalid-feedback">
+                      <div *ngIf="memberForm.get('firstname').errors.required">
+                      This field is required
+                      </div>
+                      <div *ngIf="memberForm.get('firstname').errors.minlength">
+                        Minimum 4 characters
+                      </div>
+                  </div>
+                </div>
+              </div>
+    
+              <div class="form-group">
+                <label for="lastname">Last Name</label>
+                <div class="input-group">
+                  <input id="lastname" class="form-control" placeholder="Last Name" name="lastname" type="text" minlength="4" formControlName="lastname" [ngClass]="(memberForm.get('lastname').touched || memberForm.get('lastname').dirty) && memberForm.get('lastname').errors ? 'is-invalid' : ''" required>
+                  <div *ngIf="memberForm.get('lastname').invalid && (memberForm.get('lastname').dirty || memberForm.get('lastname').touched)" class="invalid-feedback">
+                      <div *ngIf="memberForm.get('lastname').errors.required">
+                      This field is required
+                      </div>
+                      <div *ngIf="memberForm.get('lastname').errors.minlength">
+                        Minimum 4 characters
+                      </div>
+                  </div>
+                </div>
+              </div>
+ 
+              <div class="form-group">
+                <label for="othername">Other Name</label>
+                <div class="input-group">
+                  <input id="othername" class="form-control" placeholder="Other Name" name="othername" type="text" minlength="4" formControlName="othername" [ngClass]="(memberForm.get('othername').touched || memberForm.get('othername').dirty) && memberForm.get('othername').errors ? 'is-invalid' : ''" required>
+                  <div *ngIf="memberForm.get('othername').invalid && (memberForm.get('othername').dirty || memberForm.get('othername').touched)" class="invalid-feedback">
+                      <div *ngIf="memberForm.get('othername').errors.required">
+                      This field is required
+                      </div>
+                      <div *ngIf="memberForm.get('othername').errors.minlength">
+                        Minimum 4 characters
+                      </div>
+                  </div>
+                </div>
+              </div>
+              
+              <label>Gender:</label>
+              <div class="form-group">
+                <div class="col">
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="gender" id="exampleRadios1" value="Male" formControlName="gender" checked>
+                    <label class="form-check-label" for="exampleRadios1">
+                      Male
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="gender" id="exampleRadios2" value="Female" formControlName="gender">
+                    <label class="form-check-label" for="exampleRadios2">
+                      Female
+                    </label>
+                  </div>
+                </div>
+              </div>
+    
+              <div class="form-group">
+                <label for="email">Email</label>
+                <div class="input-group">
+                  <input id="email" class="form-control" placeholder="Email" name="email" type="email" formControlName="email" [ngClass]="(memberForm.get('email').touched || memberForm.get('email').dirty) && memberForm.get('email').errors ? 'is-invalid' : ''" required>
+                    <div *ngIf="memberForm.get('email').invalid && (memberForm.get('email').dirty || memberForm.get('email').touched)" class="invalid-feedback">
+                        <div *ngIf="memberForm.get('email').errors.required">
+                        This field is required
+                        </div>
+                        <div *ngIf="memberForm.get('email').invalid">
+                            Invalid Email
+                        </div>
+                    </div>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="digitaladdress">Digital Address</label>
+                <div class="input-group">
+                  <input id="digitaladdress" class="form-control" placeholder="Digital Address" name="digitaladdress" type="text" formControlName="digitaladdress" [ngClass]="(memberForm.get('digitaladdress').touched || memberForm.get('digitaladdress').dirty) && memberForm.get('digitaladdress').errors ? 'is-invalid' : ''" required>
+                  <div *ngIf="memberForm.get('digitaladdress').invalid && (memberForm.get('digitaladdress').dirty || memberForm.get('digitaladdress').touched)" class="invalid-feedback">
+                      <div *ngIf="memberForm.get('digitaladdress').errors.required">
+                      This field is required
+                      </div>
+                  </div>
+              </div>
+              </div>
+    
+              <div class="form-group">
+                <label for="phonenumber">Phone Number</label>
+                <div class="input-group">
+                  <input id="phonenumber" class="form-control" placeholder="Phone Number" name="phonenumber" type="tel" maxlength="10" formControlName="phonenumber" [ngClass]="(memberForm.get('phonenumber').touched || memberForm.get('phonenumber').dirty) && memberForm.get('phonenumber').errors ? 'is-invalid' : ''" required>
+                  <div *ngIf="memberForm.get('phonenumber').invalid && (memberForm.get('phonenumber').dirty || memberForm.get('phonenumber').touched)" class="invalid-feedback">
+                      <div *ngIf="memberForm.get('phonenumber').errors.required">
+                      This field is required
+                      </div>
+                      <div *ngIf="memberForm.get('phonenumber').errors.maxlength">
+                        Maximum 10 characters
+                      </div>
+                  </div>
+                </div>
+              </div>
+
+      
+    
+              <div class="form-group">
+                <label for="dateofbirth">Date Of Birth</label>
+                <div class="input-group">
+                  <input id="dateofbirth" class="form-control" name="dateofbirth" type="date" formControlName="dateofbirth" [ngClass]="(memberForm.get('dateofbirth').touched || memberForm.get('dateofbirth').dirty) && memberForm.get('dateofbirth').errors ? 'is-invalid' : ''" required>
+                  <div *ngIf="memberForm.get('dateofbirth').invalid && (memberForm.get('dateofbirth').dirty || memberForm.get('dateofbirth').touched)" class="invalid-feedback">
+                      <div *ngIf="memberForm.get('dateofbirth').errors.required">
+                      This field is required
+                      </div>
+                  </div>
+              </div>
+              </div>
+                  
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-info">Save</button>
+                <button type="button" class="btn btn-outline-dark" (click)="modal.close('Cancel click')">Cancel</button>
+              </div>
+            </form>
+          </div>
+      </div>
+    </ng-template>
+  </div>
+  

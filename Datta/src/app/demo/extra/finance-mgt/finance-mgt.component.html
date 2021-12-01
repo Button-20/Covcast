@@ -1,0 +1,147 @@
+<div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="form-group">
+          <input type="text" class="form-control w-50" id="search" aria-describedby="searchHelp" placeholder="Search" [(ngModel)]="search">
+          <small id="searchHelp" class="form-text text-muted">Search for Finance by Member's Name, Amount or Date of Payment</small>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group d-inline">
+          Date
+          <input class="form-control d-inline" type="date" style="width: 160px;" [(ngModel)]="model.startdate">
+        </div>
+        <div class="form-group d-inline">
+          To
+          <input class="form-control d-inline" type="date" style="width: 160px;" [(ngModel)]="model.enddate">
+        </div>
+      </div>
+      <div class="form-group">
+        <button class="btn btn-info mb-4" type="button" (click)="startSearch(model.startdate, model.enddate)">Search</button>
+        <button class="btn btn-info mb-4" type="button" (click)="clearSearch()">Clear</button>
+        <div class="btn-group mb-4 mr-2" ngbDropdown [placement]="'bottom-left'">
+          <button class="btn btn-outline-dark" ngbDropdownToggle type="button">Export</button>
+          <div ngbDropdownMenu>
+            <a class="dropdown-item" href="javascript:">Excel</a>
+            <a class="dropdown-item" href="javascript:">Pdf</a>
+          </div>
+        </div>  
+        <button class="btn btn-danger mb-4" type="button" (click)="open(content)">Add Due</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <app-card [hidHeader]="true">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <!-- <th scope="col">#</th> -->
+                  <th scope="col">Member Name</th>
+                  <th scope="col">Amount</th>
+                  <th scope="col">Date Of Payment</th>
+                  <th scope="col">Description</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody *ngFor="let dues of duesService.dues | duesFilter: search">
+              <tr class="unread">
+                <!-- <td><img class="rounded-circle" style="width:40px;" src="assets/images/user/avatar-1.jpg" alt="activity-user"></td> -->
+                <td>
+                  <h6 class="mb-1">{{dues.membername}}</h6>
+                </td>
+                <td>
+                  <h6 class="mb-1">{{dues.amount | currency: 'GH&cent;'}}</h6>
+                </td>
+                <td>
+                  <h6 class="mb-1">{{dues.dateofpayment | date: "yyyy/M/dd"}}</h6>
+                </td>
+                <td>
+                  <h6 class="mb-1">{{dues.description}}</h6>
+                </td>
+                <td>
+                  <a href="javascript:" class="label theme-bg2 text-white f-12" (click)="onEdit(content, dues)"><i class="feather icon-edit-2"></i></a>
+                  <a href="javascript:" class="label theme-bg text-white f-12" (click)="onDelete(dues._id)"><i class="feather icon-trash"></i></a>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </app-card>
+        </div>
+    </div>
+  
+    <ng-template #content let-modal>
+      <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Members Form</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form [formGroup]="duesForm" (ngSubmit)="dueFormSubmit()">
+              
+              <input type="hidden" name="_id" class="form-control" formControlName="_id">
+                <input type="hidden" name="classname" class="form-control" formControlName="classname">
+                <input type="hidden" name="userid" class="form-control" formControlName="userid">
+    
+              <div class="form-group">
+                <label for="membername">Member Name</label>
+                <div class="input-group">
+                  <select id="membername" class="form-control" placeholder="Member Name" name="membername" formControlName="membername" [ngClass]="(duesForm.get('membername').touched || duesForm.get('membername').dirty) && duesForm.get('membername').errors ? 'is-invalid' : ''" required>
+                    <option value="" disabled>Select Member's Name</option>
+                    <option *ngFor="let mem of memberService.members | usersmem" [ngValue]="mem.firstname + space + mem.lastname + space + mem.othername">{{mem.firstname + space + mem.lastname + space + mem.othername}}</option>
+                  </select>
+                  <div *ngIf="duesForm.get('membername').invalid && (duesForm.get('membername').dirty || duesForm.get('membername').touched)" class="invalid-feedback">
+                      <div *ngIf="duesForm.get('membername').errors.required">
+                      This field is required
+                      </div>
+                  </div>
+                </div>
+              </div>
+    
+              <div class="form-group">
+                <label for="amount">Amount</label>
+                <div class="input-group">
+                  <input id="amount" class="form-control" placeholder="Amount" name="amount" type="numner" formControlName="amount" [ngClass]="(duesForm.get('amount').touched || duesForm.get('amount').dirty) && duesForm.get('amount').errors ? 'is-invalid' : ''" required>
+                  <div *ngIf="duesForm.get('amount').invalid && (duesForm.get('amount').dirty || duesForm.get('amount').touched)" class="invalid-feedback">
+                      <div *ngIf="duesForm.get('amount').errors.required">
+                      This field is required
+                      </div>
+                  </div>
+                </div>
+              </div>
+ 
+              <div class="form-group">
+                <label for="dateofpayment">Date Of Payment</label>
+                <div class="input-group">
+                  <input id="dateofpayment" class="form-control" name="dateofpayment" type="date" formControlName="dateofpayment" [ngClass]="(duesForm.get('dateofpayment').touched || duesForm.get('dateofpayment').dirty) && duesForm.get('dateofpayment').errors ? 'is-invalid' : ''" required>
+                  <div *ngIf="duesForm.get('dateofpayment').invalid && (duesForm.get('dateofpayment').dirty || duesForm.get('dateofpayment').touched)" class="invalid-feedback">
+                      <div *ngIf="duesForm.get('dateofpayment').errors.required">
+                      This field is required
+                      </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="description">Description</label>
+                <div class="input-group">
+                  <input id="description" class="form-control" placeholder="Description" name="description" type="text" formControlName="description">
+                </div>
+              </div>
+
+      
+    
+                  
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-info">Save</button>
+                <button type="button" class="btn btn-outline-dark" (click)="modal.close('Cancel click')">Cancel</button>
+              </div>
+            </form>
+          </div>
+      </div>
+    </ng-template>
+  </div>
+  

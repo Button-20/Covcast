@@ -1,0 +1,54 @@
+@API_URL = http://localhost:8000/api
+# @API_URL = https://evening-island-44720.herokuapp.com
+@id = 61a2a0b613273118c43432db
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWE1ZmZhOGFiMjQ1MzM0MTBiMzdhNGEiLCJyb2xlIjoiQWRtaW4iLCJjbGFzc25hbWUiOiJCLk8uUC4iLCJwaWMiOiJhc3NldHMvaW1nL2RlZmF1bHQtYXZhdGFyLnBuZyIsImxvZ2luUGVybWlzc2lvbiI6dHJ1ZSwiaWF0IjoxNjM4MzA1MzE4LCJleHAiOjE2MzgzMDg5MTh9.ft6GXmcPRnzgN57ZEey9-OPHKXzk9tKiNs-WP7S_fBY
+@classname = Hawkers
+
+### REGISTER USER
+
+POST {{API_URL}}/register
+Content-Type: application/json
+
+{
+    "classname": "B.O.P.",
+    "fullname": "Jason Addy",
+    "password": "admin",
+    "phonenumber": "0207410032",
+    "email": "admin@demo.com",
+    "occupation": "Software Developer",
+    "address": "GA-09492843-12",
+    "loginPermission": true
+}
+
+### USER LOGIN
+
+POST {{API_URL}}/authenticate
+Content-Type: application/json
+
+{
+    "email": "admin@demo.com",
+    "password": "admin"
+}
+
+### GET USER DATA
+
+GET {{API_URL}}/users
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### GET USER BY ID
+
+GET {{API_URL}}/users/{{id}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+##################################################################
+
+### GET MEMBERS BY CLASSNAME
+
+GET {{API_URL}}/user/members/classname/{{classname}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+

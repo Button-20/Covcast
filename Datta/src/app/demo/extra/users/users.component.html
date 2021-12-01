@@ -1,0 +1,201 @@
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <div class="form-group">
+        <input type="text" class="form-control w-50" id="search" aria-describedby="searchHelp" placeholder="Search" [(ngModel)]="search">
+        <small id="searchHelp" class="form-text text-muted">Search for Users by Class Name, Full Name, Email or Phone Number</small>
+      </div>
+    </div>
+    <div class="form-group">
+      <button class="btn btn-danger mb-4" type="button" (click)="open(content)">Add Users</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+      <app-card [hidHeader]="true">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <!-- <th scope="col">#</th> -->
+                <th scope="col">Class Name</th>
+                <th scope="col">Full Name</th>
+                <th scope="col">Phone Number</th>
+                <th scope="col">Roles</th>
+                <th scope="col">Email</th>
+                <th scope="col">Permission Status</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let user of userService.users | searchFilter: search">
+            <tr class="unread">
+              <!-- <td><img class="rounded-circle" style="width:40px;" src="assets/images/user/avatar-1.jpg" alt="activity-user"></td> -->
+              <td>
+                <h6 class="mb-1">{{user.classname}}</h6>
+              </td>
+              <td>
+                <h6 class="mb-1">{{user.fullname}}</h6>
+              </td>
+              <td>
+                <h6 class="mb-1">{{user.phonenumber}}</h6>
+              </td>
+              <td>
+                <a href="javascript:" class="label bg-danger text-white f-12" *ngIf="user.role == 'Admin'">Admin</a>
+                <a href="javascript:" class="label bg-primary text-white f-12" *ngIf="user.role == 'User'">User</a>
+              </td>
+              <td>
+                <h6 class="mb-1">{{user.email}}</h6>
+              </td>
+              <td>
+                <a href="javascript:" class="label bg-success text-white f-12" *ngIf="user.loginPermission == true">Active</a>
+                <a href="javascript:" class="label bg-warning text-white f-12" *ngIf="user.loginPermission == false">Disabled</a>
+              </td>
+              <td>
+                <a href="javascript:" class="label theme-bg2 text-white f-12" (click)="onEdit(content, user)"><i class="feather icon-edit-2"></i></a>
+                <a href="javascript:" class="label theme-bg text-white f-12" (click)="onDelete(user._id)"><i class="feather icon-trash"></i></a>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </app-card>
+      </div>
+  </div>
+
+  <ng-template #content let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal-basic-title">Group / Class Leader Form</h4>
+          <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="userForm" (ngSubmit)="userFormSubmit()">
+            
+            <input type="hidden" name="_id" class="form-control" formControlName="_id">
+            <input type="hidden" name="role" class="form-control" formControlName="role">
+  
+            <div class="form-group">
+              <label for="classname">Class Name</label>
+              <div class="input-group">
+                <input id="classname" class="form-control" placeholder="Class Name" name="classname" type="text" minlength="4" formControlName="classname" [ngClass]="(userForm.get('classname').touched || userForm.get('classname').dirty) && userForm.get('classname').errors ? 'is-invalid' : ''" required>
+                <div *ngIf="userForm.get('classname').invalid && (userForm.get('classname').dirty || userForm.get('classname').touched)" class="invalid-feedback">
+                    <div *ngIf="userForm.get('classname').errors.required">
+                    This field is required
+                    </div>
+                    <div *ngIf="userForm.get('classname').errors.minlength">
+                      Minimum 4 characters
+                    </div>
+                </div>
+              </div>
+            </div>
+  
+            <div class="form-group">
+              <label for="fullname">Full Name</label>
+              <div class="input-group">
+                <input id="fullname" class="form-control" placeholder="Full Name" name="fullname" type="text" minlength="4" formControlName="fullname" [ngClass]="(userForm.get('fullname').touched || userForm.get('fullname').dirty) && userForm.get('fullname').errors ? 'is-invalid' : ''" required>
+                <div *ngIf="userForm.get('fullname').invalid && (userForm.get('fullname').dirty || userForm.get('fullname').touched)" class="invalid-feedback">
+                    <div *ngIf="userForm.get('fullname').errors.required">
+                    This field is required
+                    </div>
+                    <div *ngIf="userForm.get('fullname').errors.minlength">
+                      Minimum 4 characters
+                    </div>
+                </div>
+            </div>
+            </div>
+  
+            <div class="form-group">
+              <label for="phonenumber">Phone Number</label>
+              <div class="input-group">
+                <input id="phonenumber" class="form-control" placeholder="Phone Number" name="phonenumber" type="tel" maxlength="10" formControlName="phonenumber" [ngClass]="(userForm.get('phonenumber').touched || userForm.get('phonenumber').dirty) && userForm.get('phonenumber').errors ? 'is-invalid' : ''" required>
+                <div *ngIf="userForm.get('phonenumber').invalid && (userForm.get('phonenumber').dirty || userForm.get('phonenumber').touched)" class="invalid-feedback">
+                    <div *ngIf="userForm.get('phonenumber').errors.required">
+                    This field is required
+                    </div>
+                    <div *ngIf="userForm.get('phonenumber').errors.maxlength">
+                      Maximum 10 characters
+                    </div>
+                </div>
+            </div>
+            </div>
+  
+            <div class="form-group">
+              <label for="address">Address</label>
+              <div class="input-group">
+                <input id="address" class="form-control" placeholder="Address" name="address" type="text" formControlName="address" [ngClass]="(userForm.get('address').touched || userForm.get('address').dirty) && userForm.get('address').errors ? 'is-invalid' : ''" required>
+                <div *ngIf="userForm.get('address').invalid && (userForm.get('address').dirty || userForm.get('address').touched)" class="invalid-feedback">
+                    <div *ngIf="userForm.get('address').errors.required">
+                    This field is required
+                    </div>
+                    <div *ngIf="userForm.get('address').errors.minlength">
+                      Minimum 4 characters
+                    </div>
+                </div>
+            </div>
+            </div>
+  
+            <div class="form-group">
+              <label for="occupation">Occupation</label>
+              <div class="input-group">
+                <input id="occupation" class="form-control" placeholder="Occupation" name="occupation" type="text" minlength="4" formControlName="occupation" [ngClass]="(userForm.get('occupation').touched || userForm.get('occupation').dirty) && userForm.get('occupation').errors ? 'is-invalid' : ''" required>
+                <div *ngIf="userForm.get('occupation').invalid && (userForm.get('occupation').dirty || userForm.get('occupation').touched)" class="invalid-feedback">
+                    <div *ngIf="userForm.get('occupation').errors.required">
+                    This field is required
+                    </div>
+                    <div *ngIf="userForm.get('occupation').errors.minlength">
+                      Minimum 4 characters
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <div class="input-group">
+                <input id="email" class="form-control" placeholder="Email" name="email" type="email" formControlName="email" [ngClass]="(userForm.get('email').touched || userForm.get('email').dirty) && userForm.get('email').errors ? 'is-invalid' : ''" required>
+                <div *ngIf="userForm.get('email').invalid && (userForm.get('email').dirty || userForm.get('email').touched)" class="invalid-feedback">
+                  <div *ngIf="userForm.get('email').errors.required">
+                  This field is required
+                  </div>
+                  <div *ngIf="userForm.get('email').invalid">
+                    Invalid Email
+                  </div>
+              </div>
+            </div>
+            </div>
+  
+            <div class="form-group" *ngIf="showPass == true">
+              <label for="password">Password</label>
+              <div class="input-group">
+                <input id="password" class="form-control" placeholder="Password" name="password" type="password" minlength="4" formControlName="password" [ngClass]="(userForm.get('password').touched || userForm.get('password').dirty) && userForm.get('password').errors ? 'is-invalid' : ''" required>
+                <div *ngIf="userForm.get('password').invalid && (userForm.get('password').dirty || userForm.get('password').touched)" class="invalid-feedback">
+                    <div *ngIf="userForm.get('password').errors.required">
+                    This field is required
+                    </div>
+                    <div *ngIf="userForm.get('password').errors.minlength">
+                      Minimum 4 characters
+                    </div>
+                </div>
+            </div>
+            </div>
+  
+            <div class="form-group">
+              <label for="loginPermission">Login Permission</label>
+              <div class="p-1">
+                <label class="switch">
+                  <input type="checkbox" id="loginPermission" [checked]="userForm.get('loginPermission').value" (change)="!model.loginPermission = model.loginPermission" name="loginPermission" formControlName="loginPermission"> 
+                  <span class="slider round"></span>
+                </label>
+              </div>
+            </div>
+            
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-info">Save</button>
+              <button type="button" class="btn btn-outline-dark" (click)="modal.close('Cancel click')">Cancel</button>
+            </div>
+          </form>
+        </div>
+    </div>
+  </ng-template>
+</div>
