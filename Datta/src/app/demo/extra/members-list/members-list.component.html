@@ -58,7 +58,7 @@
                   <h6 class="mb-1">{{mem.digitaladdress}}</h6>
                 </td>
                 <td>
-                  <h6 class="mb-1">{{mem.phonenumber}}</h6>
+                  <h6 class="mb-1"><a href="javascript:" (click)="openSmsForm(smscontent, $event)">{{mem.phonenumber}}</a></h6>
                 </td>
                 <td>
                   <h6 class="mb-1">{{mem.dateofbirth | date: "yyyy/M/dd"}}</h6>
@@ -216,5 +216,51 @@
           </div>
       </div>
     </ng-template>
+
+    <ng-template #smscontent let-modal>
+      <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Sms Form</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form [formGroup]="smsForm" (ngSubmit)="sendSms()">
+              
+              <div class="form-group">
+                <label for="destination">Destination</label>
+                <div class="input-group">
+                  <input id="destination" class="form-control" placeholder="Destination" name="destination" type="text" formControlName="destination" disabled [ngClass]="(smsForm.get('destination').touched || smsForm.get('destination').dirty) && smsForm.get('destination').errors ? 'is-invalid' : ''" required>
+                  <!-- <div *ngIf="smsForm.get('destination').invalid && (smsForm.get('destination').dirty || smsForm.get('destination').touched)" class="invalid-feedback">
+                      <div *ngIf="smsForm.get('destination').errors.required">
+                      This field is required
+                      </div>
+                  </div> -->
+                </div>
+              </div>
+    
+              <div class="form-group">
+                <label for="message">Message</label>
+                <div class="input-group">
+                  <input id="message" class="form-control" placeholder="Type you message" name="message" type="text" formControlName="message" [ngClass]="(smsForm.get('message').touched || smsForm.get('message').dirty) && smsForm.get('message').errors ? 'is-invalid' : ''" required>
+                  <div *ngIf="smsForm.get('message').invalid && (smsForm.get('message').dirty || smsForm.get('message').touched)" class="invalid-feedback">
+                      <div *ngIf="smsForm.get('message').errors.required">
+                      This field is required
+                      </div>
+                  </div>
+                </div>
+              </div>
+ 
+                  
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-info">Send</button>
+                <button type="button" class="btn btn-outline-dark" (click)="modal.close('Cancel click')">Cancel</button>
+              </div>
+            </form>
+          </div>
+      </div>
+    </ng-template>
+
   </div>
   

@@ -3,6 +3,7 @@ import { Members } from './members.model';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { Sms } from './sms.model';
 
 
 
@@ -64,6 +65,10 @@ export class MembersService {
 
   deleteMember(_id: string){
     return this.http.delete(environment.apiBaseUrl + `/user/members/${_id}`);
+  }
+
+  postSms(sms: Sms){
+    return this.http.post(environment.apiBaseUrl + `/user/members/sms`, sms);
   }
 
 

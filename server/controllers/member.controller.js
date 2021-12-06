@@ -1,7 +1,8 @@
-const mongoose = require('mongoose');
 var  { Member } = require('../models/member.model');
 var ObjectId = require('mongoose').Types.ObjectId;
 var xlsxtojson = require('xlsx-to-json');
+var unirest = require('unirest');
+const smsApiUrl = 'https://sms.nalosolutions.com/smsbackend/clientapi/Resl_Nalo';
 global.__basedir = __dirname;
 
 // Registering a Member
@@ -195,3 +196,30 @@ module.exports.delete = (req, res) => {
             else { console.log('Error in Retrieving Member :' + JSON.stringify(err, undefined, 2))};
         });
 }
+
+async function sendSms (req, res, next){
+    let data = {
+        username: 'Bill123',
+        password: 'Bill123',
+        type: '0',
+        dlr: '1',
+        destination: req.body.destination,
+        source: req.body.source,
+        message: req.body.message
+    }
+    // console.log(req);
+    var request = unirest('GET', `${smsApiUrl}/send-message/?username=${data.username}&password=${data.password}&type=${data.type}&dlr=${data.dlr}&destination=${data.destination}&source=${data.source}&message=${data.message}`)
+        .headers({
+            'Content-Type': ['application/json', 'application/json']
+        })
+        .end(
+        async(resp) => {
+            if (!resp.error)
+               return res.status(200).json('Sms Sent Successfully');
+            else
+                console.log(res.raw_body)
+
+        })
+}
+
+module.exports.sendSms = sendSms;

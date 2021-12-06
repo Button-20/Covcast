@@ -1,0 +1,54 @@
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <!-- <div class="form-group">
+        <input type="text" class="form-control w-50" id="search" aria-describedby="searchHelp" placeholder="Search" [(ngModel)]="search">
+        <small id="searchHelp" class="form-text text-muted">Search for Users by Class Name, Full Name, Email or Phone Number</small>
+      </div> -->
+    </div>
+    <!-- <div class="form-group">
+      <button class="btn btn-danger mb-4" type="button" (click)="open(content)">Add Users</button>
+    </div> -->
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+      <app-card [hidHeader]="true">
+        <form [formGroup]="bulkSmsForm" (ngSubmit)="bulkSmsFormSubmit()">
+          <p class="text-danger font-weight-bold mb-1"><b>NB:</b> Make sure to separate the phone numbers with commas "," i.e 02000000xxxx,02000000xxxx </p>
+
+          <div class="form-group">
+            <label for="destination">Destination</label>
+            <div class="input-group">
+              <input id="destination" class="form-control" placeholder="Type your phone numbers here" name="destination" type="text" formControlName="destination" [ngClass]="(bulkSmsForm.get('destination').touched || bulkSmsForm.get('destination').dirty) && bulkSmsForm.get('destination').errors ? 'is-invalid' : ''" required>
+              <div *ngIf="bulkSmsForm.get('destination').invalid && (bulkSmsForm.get('destination').dirty || bulkSmsForm.get('destination').touched)" class="invalid-feedback">
+                  <div *ngIf="bulkSmsForm.get('destination').errors.required">
+                  This field is required
+                  </div>
+                  <div *ngIf="bulkSmsForm.get('destination').errors.minlength">
+                    Type more than 1 phone numbers
+                  </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="message">Message</label>
+            <div class="input-group">
+              <textarea name="message" id="message" cols="30" rows="10" placeholder="Type your message here" formControlName="message" class="form-control" [ngClass]="(bulkSmsForm.get('message').touched || bulkSmsForm.get('message').dirty) && bulkSmsForm.get('message').errors ? 'is-invalid' : ''" required></textarea>
+              <div *ngIf="bulkSmsForm.get('message').invalid && (bulkSmsForm.get('message').dirty || bulkSmsForm.get('message').touched)" class="invalid-feedback">
+                  <div *ngIf="bulkSmsForm.get('message').errors.required">
+                  This field is required
+                  </div>
+              </div>
+            </div>
+          </div>
+
+          
+            <button type="submit" class="btn btn-info">Send</button>
+            <button type="button" class="btn btn-outline-dark" (click)="resetForm()">Reset Form</button>
+        </form>
+      </app-card>
+      </div>
+  </div>
+
+</div>

@@ -14,20 +14,30 @@ import { UserService } from 'src/app/theme/shared/user.service';
   styleUrls: ['./members-list.component.scss']
 })
 export class MembersListComponent implements OnInit {
+  model = {gender: true}
+
   memberForm = new FormGroup({
     classname: new FormControl('', Validators.required),
     _id: new FormControl('', Validators.required),
     firstname: new FormControl('', [Validators.required, Validators.minLength(4)]),
     lastname: new FormControl('', [Validators.required, Validators.minLength(4)]),
     othername: new FormControl('', [Validators.required, Validators.minLength(4)]),
-    gender: new FormControl('', Validators.required),
+    gender: new FormControl(this.model.gender),
     email: new FormControl('', [Validators.required, Validators.email]),
     digitaladdress: new FormControl('', [Validators.required, Validators.minLength(4)]),
     phonenumber: new FormControl('', [Validators.required, Validators.minLength(10)]),
     dateofbirth: new FormControl('', Validators.required),
   })
+
+  smsForm = new FormGroup({
+    destination: new FormControl('', Validators.required),
+    source: new FormControl('', Validators.required),
+    message: new FormControl('', Validators.required),
+  })
+
   serverErrorMessages = '';
   search: string;
+
 
   constructor(private userService: UserService,public memberService: MembersService, private modalService: NgbModal, private toastr: ToastrService) { }
 
@@ -90,7 +100,8 @@ export class MembersListComponent implements OnInit {
     var payload = this.userService.getUserPayload();
     if (payload) {
       this.memberForm.patchValue({
-        classname: payload.classname
+        classname: payload.classname,
+        gender: this.model.gender
       })   
     }
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'})
@@ -125,5 +136,28 @@ export class MembersListComponent implements OnInit {
     return moment(date).format("yyyy-MM-DD")
   }
 
+  sendSms(){
+    this.memberService.postSms(this.smsForm.value).subscribe(
+      res => {
+        // console.log(res)
+        this.toastr.success('Sms delivered successfully', 'Sms Sent');
+        this.modalService.dismissAll();
+      },
+      err => {
+        this.toastr.error( this.serverErrorMessages = 'Something went wrong. Please contact admin.', 'Error 422')
+      }
+    )
+    // alert(JSON.stringify(this.smsForm.value));
+  }
+
+  openSmsForm(smscontent, e){
+    // console.log(e.target.innerText)
+    this.smsForm.reset();
+    this.smsForm.patchValue({
+      destination: e.target.innerText,
+      source: 'COVSYSTEM'
+    })
+    this.modalService.open(smscontent, {ariaLabelledBy: 'modal-basic-title'})
+  }
   
 }

@@ -1,0 +1,183 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="form-group">
+        <input type="text" class="form-control w-50" id="search" aria-describedby="searchHelp" placeholder="Search" [(ngModel)]="search">
+        <small id="searchHelp" class="form-text text-muted">Search for Attendance by Member's Name or Event</small>
+      </div>
+    </div>
+    <div class="col">
+      <div class="form-group d-inline">
+        Date
+        <input class="form-control d-inline" type="date" style="width: 160px;" [(ngModel)]="model.startdate">
+      </div>
+      <div class="form-group d-inline">
+        To
+        <input class="form-control d-inline" type="date" style="width: 160px;" [(ngModel)]="model.enddate">
+      </div>
+    </div>
+    <div class="form-group">
+      <button class="btn btn-info mb-4" type="button" (click)="startSearch(model.startdate, model.enddate)">Search</button>
+      <button class="btn btn-info mb-4" type="button" (click)="clearSearch()">Clear</button>
+      <div class="btn-group mb-4 mr-2" ngbDropdown [placement]="'bottom-left'">
+        <button class="btn btn-outline-dark" ngbDropdownToggle type="button">Export</button>
+        <div ngbDropdownMenu>
+          <a class="dropdown-item" href="javascript:">Excel</a>
+          <a class="dropdown-item" href="javascript:">Pdf</a>
+        </div>
+      </div>  
+      <button class="btn btn-danger mb-4" type="button" (click)="open(content)">Add Attendance</button>
+    </div>
+  </div>
+  <div class="row">
+      <div class="col-sm-12">
+        <app-card [hidHeader]="true">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <!-- <th scope="col">#</th> -->
+                  <th scope="col">Class Name</th>
+                  <th scope="col">Member Name</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">Temperature</th>
+                  <th scope="col">Event</th>
+                  <th scope="col">Present</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody *ngFor="let attendance of attendanceService.attendance | attendanceFilter: search">
+              <tr class="read">
+                <!-- <td><img class="rounded-circle" style="width:40px;" src="assets/images/user/avatar-1.jpg" alt="activity-user"></td> -->
+                <td>
+                  <h6 class="mb-1">{{attendance.classname}}</h6>
+                </td>
+                <td>
+                  <h6 class="mb-1">{{attendance.membername}}</h6>
+                </td>
+                <td>
+                  <h6 class="mb-1">{{attendance.date | date: "yyyy/M/dd"}}</h6>
+                </td>
+                <td>
+                  <h6 class="mb-1">{{attendance.temperature}}</h6>
+                </td>
+                <td>
+                  <h6 class="mb-1">{{attendance.event}}</h6>
+                </td>
+                <td>
+                  <h6 class="mb-1">
+                    <a href="javascript:" class="label bg-success text-white f-12" *ngIf="attendance.present == true">Yes</a>
+                    <a href="javascript:" class="label bg-danger text-white f-12" *ngIf="attendance.present == false">No</a>
+                      </h6>
+                </td>
+                <td>
+                  <a href="javascript:" class="label theme-bg2 text-white f-12" (click)="onEdit(content, attendance)"><i class="feather icon-edit-2"></i></a>
+                  <a href="javascript:" class="label theme-bg text-white f-12" (click)="onDelete(attendance._id)"><i class="feather icon-trash"></i></a>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </app-card>
+        </div>
+    </div>
+  
+    <ng-template #content let-modal>
+      <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Attendance Form</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form [formGroup]="attendanceForm" (ngSubmit)="attendanceFormSubmit()">
+              
+              <input type="hidden" name="_id" class="form-control" formControlName="_id">
+              <input type="hidden" name="classname" class="form-control" formControlName="classname">
+              <input type="hidden" name="userid" class="form-control" formControlName="userid">
+    
+              <div class="form-group">
+                <label for="membername">Member Name</label>
+                <div class="input-group">
+                  <select id="membername" class="form-control" placeholder="Member Name" name="membername" formControlName="membername" [ngClass]="(attendanceForm.get('membername').touched || attendanceForm.get('membername').dirty) && attendanceForm.get('membername').errors ? 'is-invalid' : ''" required>
+                    <option value="" disabled>Select Member's Name</option>
+                    <option *ngFor="let mem of memberService.members | attenmem" [ngValue]="mem.firstname + space + mem.lastname + space + mem.othername">{{mem.firstname + space + mem.lastname + space + mem.othername}}</option>
+                  </select>
+                  <div *ngIf="attendanceForm.get('membername').invalid && (attendanceForm.get('membername').dirty || attendanceForm.get('membername').touched)" class="invalid-feedback">
+                      <div *ngIf="attendanceForm.get('membername').errors.required">
+                      This field is required
+                      </div>
+                  </div>
+                </div>
+              </div>
+    
+              <div class="form-group">
+                <label for="date">Date</label>
+                <div class="input-group">
+                  <input id="date" class="form-control" name="date" type="date" formControlName="date" [ngClass]="(attendanceForm.get('date').touched || attendanceForm.get('date').dirty) && attendanceForm.get('date').errors ? 'is-invalid' : ''" required>
+                  <div *ngIf="attendanceForm.get('date').invalid && (attendanceForm.get('date').dirty || attendanceForm.get('date').touched)" class="invalid-feedback">
+                      <div *ngIf="attendanceForm.get('date').errors.required">
+                      This field is required
+                      </div>
+                  </div>
+                </div>
+              </div>
+ 
+              <div class="form-group">
+                <label for="temperature">Temperature</label>
+                <div class="input-group">
+                  <input id="temperature" class="form-control" placeholder="Temperature" name="temperature" type="number" formControlName="temperature" [ngClass]="(attendanceForm.get('temperature').touched || attendanceForm.get('temperature').dirty) && attendanceForm.get('temperature').errors ? 'is-invalid' : ''" required>
+                  <div *ngIf="attendanceForm.get('temperature').invalid && (attendanceForm.get('temperature').dirty || attendanceForm.get('temperature').touched)" class="invalid-feedback">
+                      <div *ngIf="attendanceForm.get('temperature').errors.required">
+                      This field is required
+                      </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="event">Event / Service</label>
+                <div class="input-group">
+                  <input id="event" class="form-control" placeholder="Event" name="event" type="text" formControlName="event" [ngClass]="(attendanceForm.get('event').touched || attendanceForm.get('event').dirty) && attendanceForm.get('event').errors ? 'is-invalid' : ''" required>
+                  <div *ngIf="attendanceForm.get('event').invalid && (attendanceForm.get('event').dirty || attendanceForm.get('event').touched)" class="invalid-feedback">
+                      <div *ngIf="attendanceForm.get('event').errors.required">
+                      This field is required
+                      </div>
+                      <div *ngIf="attendanceForm.get('event').errors.minlength">
+                        Minimum 4 characters
+                      </div>
+                  </div>
+                </div>
+              </div>
+
+              
+              <label for="present">Present</label>
+              <div class="form-group">
+                <div class="col">
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="present" id="exampleRadios1" value="true" formControlName="present" checked>
+                    <label class="form-check-label" for="exampleRadios1">
+                      Yes
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="present" id="exampleRadios2" value="false" formControlName="present">
+                    <label class="form-check-label" for="exampleRadios2">
+                      No
+                    </label>
+                  </div>
+                </div>
+              </div>
+    
+                <div class="modal-footer">
+                <button type="submit" class="btn btn-info">Save</button>
+                <button type="button" class="btn btn-outline-dark" (click)="modal.close('Cancel click')">Cancel</button>
+              </div>
+            </form>
+          </div>
+      </div>
+    </ng-template>
+
+  </div>
+  

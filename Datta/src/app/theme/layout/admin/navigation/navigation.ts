@@ -64,6 +64,14 @@ const NavigationItems = [
         icon: 'feather icon-file-text',
         classes: 'nav-item',
       },
+      {
+        id: 'Attendance',
+        title: 'Attendance',
+        type: 'item',
+        url: '/attendance',
+        icon: 'feather icon-user',
+        classes: 'nav-item',
+      },
     ]
   },
   // {
@@ -218,7 +226,7 @@ const NavigationItems = [
     ]
   },
   {
-    id: 'users',
+    id: 'settings',
     title: 'Settings',
     type: 'group',
     icon: 'icon-pages',
@@ -230,6 +238,14 @@ const NavigationItems = [
         url: '/users',
         classes: 'nav-item',
         icon: 'feather icon-user'
+      },
+      {
+        id: 'bulk-sms',
+        title: 'Bulk Sms',
+        type: 'item',
+        url: '/bulk-sms',
+        classes: 'nav-item',
+        icon: 'feather icon-server'
       }
       // {
       //   id: 'disabled-menu',

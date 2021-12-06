@@ -48,6 +48,14 @@ const routes: Routes = [
       {
         path: 'finance-mgt',
         loadChildren: () => import('./demo/extra/finance-mgt/finance-mgt.module').then(m => m.FinanceMgtModule)
+      },
+      {
+        path: 'attendance',
+        loadChildren: () => import('./demo/extra/attendance/attendance.module').then(m => m.AttendanceModule)
+      },
+      {
+        path: 'bulk-sms',
+        loadChildren: () => import('./demo/extra/bulk-sms/bulk-sms.module').then(m => m.BulksmsModule)
       }
     ]
   },

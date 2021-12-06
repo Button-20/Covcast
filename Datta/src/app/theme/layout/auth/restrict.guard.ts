@@ -14,7 +14,7 @@ export class RestrictGuard implements CanActivate {
     state: RouterStateSnapshot): boolean {
 
       var payload = this.userService.getUserPayload();
-      if (payload && payload.classname !== 'Admin') {
+      if (payload && payload.role !== 'Admin') {
         alert('You are not allow to access this route.')
         this.router.navigate(['/auth/signin']);
         return false;

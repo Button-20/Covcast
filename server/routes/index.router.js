@@ -19,6 +19,7 @@ router.delete('/users/:id', jwtHelper.verifyJwtToken, ctrlUser.delete);
 
 // Member => localhost:3000/api/.......
 router.post('/user/members/register', jwtHelper.verifyJwtToken, ctrlMember.register);
+router.post('/user/members/sms', ctrlMember.sendSms);
 router.post('/user/uploadExcel/:type', jwtHelper.verifyJwtToken, ctrlMember.create);
 // router.post('/user/members/insertExcel/:type', ctrlMember.uploadExcel);
 router.get('/user/members', jwtHelper.verifyJwtToken, ctrlMember.get);
