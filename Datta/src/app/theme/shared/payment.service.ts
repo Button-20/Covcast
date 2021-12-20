@@ -24,8 +24,8 @@ export class PaymentService {
     return this.http.get(environment.apiBaseUrl+`/user/payment/user/${id}`);
   }
 
-  getDateRangeFilter(startdate: string, enddate: string){
-    return this.http.get(environment.apiBaseUrl + `/user/payment/${startdate}/${enddate}`);
-  }
+  // getDateRangeFilter(startdate: string, enddate: string){
+  //   return this.http.get(environment.apiBaseUrl + `/user/payment/${startdate}/${enddate}`);
+  // }
 
 }

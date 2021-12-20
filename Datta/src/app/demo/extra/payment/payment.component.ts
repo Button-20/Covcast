@@ -18,8 +18,9 @@ export class PaymentComponent implements OnInit {
     _id: new FormControl('', Validators.required),
     userid: new FormControl('', Validators.required),
     modeOfPayment: new FormControl('', Validators.required),
-    typeOfPayment: new FormControl('', Validators.required),
+    subscription_plan: new FormControl('', Validators.required),
     currencyCode: new FormControl('', [Validators.required, Validators.minLength(1)]),
+    amount: new FormControl(null, Validators.required),
     description: new FormControl(''),
     status: new FormControl('', Validators.required)
   })
@@ -34,9 +35,10 @@ export class PaymentComponent implements OnInit {
   constructor(public memberService: MembersService, private toastr: ToastrService, private userService: UserService, private modalService: NgbModal, public paymentService: PaymentService) { }
 
   ngOnInit() {
+    this.refreshPaymentList();
   }
 
-  refreshAttendanceList(){
+  refreshPaymentList(){
     var payLoad = this.userService.getUserPayload();
     if (payLoad.classname == 'Admin') {
       this.paymentService.getPaymentsList().subscribe((res) => {
@@ -84,11 +86,11 @@ export class PaymentComponent implements OnInit {
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'})
   }
 
-  startSearch(startdate, enddate){
-    this.paymentService.getDateRangeFilter(startdate, enddate).subscribe((res) => {
-      this.paymentService.payment = res as Payment[];
-    })
-  }
+  // startSearch(startdate, enddate){
+  //   this.paymentService.getDateRangeFilter(startdate, enddate).subscribe((res) => {
+  //     this.paymentService.payment = res as Payment[];
+  //   })
+  // }
 
   clearSearch(){
     this.tempSearch = '';
@@ -99,7 +101,7 @@ export class PaymentComponent implements OnInit {
         enddate: ''
       }
       
-      this.refreshAttendanceList();
+      this.refreshPaymentList();
   }
 
 }

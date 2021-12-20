@@ -89,14 +89,14 @@ module.exports.getUserID = (req, res) => {
 }
 
 
-// Filter by date
-module.exports.getAllPaymentDateFilter = (req, res) => {
-    Payment.find({createdAt: {$gte: req.params.startdate, $lte: req.params.enddate}}, (err, doc) => {
-        if (!err) { res.send(doc); }
-        else { console.log('Error in Retrieving Payment with createdAt :' + JSON.stringify(err, undefined, 2))};
-    });
+// // Filter by date
+// module.exports.getAllPaymentDateFilter = (req, res) => {
+//     Payment.find({createdAt: {$gte: req.params.startdate, $lte: req.params.enddate}}, (err, doc) => {
+//         if (!err) { res.send(doc); }
+//         else { console.log('Error in Retrieving Payment with createdAt :' + JSON.stringify(err, undefined, 2))};
+//     });
 
-}
+// }
 
 
 // Finding an attendance with ID

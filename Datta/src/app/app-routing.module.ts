@@ -54,12 +54,16 @@ const routes: Routes = [
         loadChildren: () => import('./demo/extra/attendance/attendance.module').then(m => m.AttendanceModule)
       },
       {
-        path: 'bulk-sms',
+        path: 'services/bulk-sms',
         loadChildren: () => import('./demo/extra/bulk-sms/bulk-sms.module').then(m => m.BulksmsModule)
       },
       {
-        path: 'payment',
+        path: 'services/payment',
         loadChildren: () => import('./demo/extra/payment/payment.module').then(m => m.PaymentModule)
+      },
+      {
+        path: 'services/plan/subscription',
+        loadChildren: () => import('./demo/extra/subscription/subscription.module').then(m => m.SubscriptionModule)
       }
     ]
   },

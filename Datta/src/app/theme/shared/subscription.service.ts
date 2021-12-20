@@ -17,7 +17,7 @@ export class SubscriptionService {
   }
 
   getSubscriptionList(){
-    return this.http.get(environment.apiBaseUrl +'/user/payment');
+    return this.http.get(environment.apiBaseUrl +'/subscriptions');
   }
 
   getSubscriptionById(id: string){

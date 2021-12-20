@@ -8,9 +8,10 @@ module.exports.register = (req, res, next) => {
         userid: req.body.userid,
         plan_id: req.body.plan_id,
         subscription_start: req.body.subscription_start,
-        subscription_end: req.body.subscription_end
+        subscription_end: req.body.subscription_end,
+        status: req.body.status
     });
-    if (req.body.userid == null || req.body.userid == "" || req.body.plan_id == null || req.body.plan_id == "" || req.body.subscription_start == null || req.body.subscription_start == "" || req.body.subscription_end == null || req.body.subscription_end == ""){
+    if (req.body.userid == null || req.body.userid == "" || req.body.plan_id == null || req.body.plan_id == "" || req.body.subscription_start == null || req.body.subscription_start == "" || req.body.status == null || req.body.status == ""){
         res.status(422).send(['Ensure all fields were provided.']);
     }else{
         subscription.save((err, doc) => {
@@ -60,7 +61,8 @@ module.exports.put = (req, res) => {
             userid: req.body.userid,
             plan_id: req.body.plan_id,
             subscription_start: req.body.subscription_start,
-            subscription_end: req.body.subscription_end
+            subscription_end: req.body.subscription_end,
+            status: req.body.status
             };
         
         Subscription.findByIdAndUpdate(req.params.id, {$set: subscription}, {new: true}, (err, doc) => {

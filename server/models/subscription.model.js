@@ -21,6 +21,11 @@ var subscriptionSchema = new Schema({
         type: Date,
         required: 'Subscription End can\'t be empty',
     },
+    status: {
+        type: String,
+        required: 'Status can\'t be empty',
+        default: 'Active'
+    }
 }, {timestamps: true});
 
 module.exports = mongoose.model("Subscription", subscriptionSchema);

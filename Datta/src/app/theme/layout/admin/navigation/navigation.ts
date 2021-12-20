@@ -243,7 +243,7 @@ const NavigationItems = [
         id: 'bulk-sms',
         title: 'Bulk Sms',
         type: 'item',
-        url: '/bulk-sms',
+        url: '/services/bulk-sms',
         classes: 'nav-item',
         icon: 'feather icon-server'
       },
@@ -251,10 +251,18 @@ const NavigationItems = [
         id: 'payment',
         title: 'Payment',
         type: 'item',
-        url: '/payment',
+        url: '/services/payment',
         classes: 'nav-item',
         icon: 'ti-money'
-      }
+      },
+      {
+        id: 'subscription',
+        title: 'Subscription',
+        type: 'item',
+        url: '/services/plan/subscription',
+        classes: 'nav-item',
+        icon: 'ti-money'
+      },
       // {
       //   id: 'disabled-menu',
       //   title: 'Disabled Menu',

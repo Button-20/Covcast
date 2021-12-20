@@ -17,8 +17,8 @@
       </div>
     </div>
     <div class="form-group">
-      <button class="btn btn-info mb-4" type="button" (click)="startSearch(model.startdate, model.enddate)">Search</button>
-      <button class="btn btn-info mb-4" type="button" (click)="clearSearch()">Clear</button>
+      <!-- <button class="btn btn-info mb-4" type="button" (click)="startSearch(model.startdate, model.enddate)">Search</button>
+      <button class="btn btn-info mb-4" type="button" (click)="clearSearch()">Clear</button> -->
       <div class="btn-group mb-4 mr-2" ngbDropdown [placement]="'bottom-left'">
         <button class="btn btn-outline-dark" ngbDropdownToggle type="button">Export</button>
         <div ngbDropdownMenu>
@@ -26,7 +26,7 @@
           <a class="dropdown-item" href="javascript:">Pdf</a>
         </div>
       </div>  
-      <button class="btn btn-danger mb-4" type="button" (click)="open(content)">Make Payment</button>
+      <button class="btn btn-danger mb-4" type="button" (click)="open(content)">Add Subscription</button>
     </div>
   </div>
   <div class="row">
@@ -38,51 +38,38 @@
                 <tr>
                   <!-- <th scope="col">#</th> -->
                   <th scope="col">User Name</th>
-                  <th scope="col">Transaction Code</th>
-                  <th scope="col">Mode Of Payment</th>
-                  <th scope="col">Subscription Plan</th>
-                  <th scope="col">Currency Code</th>
-                  <th scope="col">Amount</th>
-                  <th scope="col">Description</th>
+                  <th scope="col">Plan Type</th>
+                  <th scope="col">Subscription Start</th>
+                  <th scope="col">Subscription End</th>
                   <th scope="col">Status</th>
-                  <!-- <th scope="col">Action</th> -->
+                  <th scope="col">Action</th>
                 </tr>
               </thead>
-              <tbody *ngFor="let payment of paymentService.payment">
+              <tbody *ngFor="let subscription of subscriptionService.subscription">
               <tr class="read">
                 <!-- <td><img class="rounded-circle" style="width:40px;" src="assets/images/user/avatar-1.jpg" alt="activity-user"></td> -->
                 <td>
-                  <h6 class="mb-1">{{payment.userid.fullname}}</h6>
+                  <h6 class="mb-1">{{subscription.userid.fullname}}</h6>
                 </td>
                 <td>
-                  <h6 class="mb-1">{{payment.transaction_Code}}</h6>
+                  <h6 class="mb-1">{{subscription.plan_id.name}}</h6>
                 </td>
                 <td>
-                  <h6 class="mb-1">{{payment.modeOfPayment}}</h6>
+                  <h6 class="mb-1">{{subscription.subscription_start | date: "yyyy/M/dd"}}</h6>
                 </td>
                 <td>
-                  <h6 class="mb-1">{{payment.subscription_plan.name}}</h6>
-                </td>
-                <td>
-                  <h6 class="mb-1">{{payment.currencyCode}}</h6>
-                </td>
-                <td>
-                  <h6 class="mb-1">{{payment.amount}}</h6>
-                </td>
-                <td>
-                  <h6 class="mb-1">{{payment.description}}</h6>
+                  <h6 class="mb-1">{{subscription.subscription_end | date: "yyyy/M/dd"}}</h6>
                 </td>
                 <td>
                   <h6 class="mb-1">
-                    <a href="javascript:" class="label bg-success text-white f-12" *ngIf="payment.status == 'Success'">Success</a>
-                    <a href="javascript:" class="label bg-warning text-white f-12" *ngIf="payment.status == 'Pending'">Pending</a>
-                    <a href="javascript:" class="label bg-danger text-white f-12" *ngIf="payment.status == 'Failed'">Failed</a>
+                    <a href="javascript:" class="label bg-success text-white f-12" *ngIf="subscription.status === 'Active'">Active</a>
+                    <a href="javascript:" class="label bg-danger text-white f-12" *ngIf="subscription.status === 'Inactive'">Inactive</a>
                   </h6>
                 </td>
-                <!-- <td>
-                  <a href="javascript:" class="label theme-bg2 text-white f-12" (click)="onEdit(content, attendance)"><i class="feather icon-edit-2"></i></a>
-                  <a href="javascript:" class="label theme-bg text-white f-12" (click)="onDelete(attendance._id)"><i class="feather icon-trash"></i></a>
-                </td> -->
+                <td>
+                  <a href="javascript:" class="label theme-bg2 text-white f-12" (click)="onEdit(content, subscription)"><i class="feather icon-edit-2"></i></a>
+                  <!-- <a href="javascript:" class="label theme-bg text-white f-12" (click)="onDelete(subscription._id)"><i class="feather icon-trash"></i></a> -->
+                </td>
               </tr>
               </tbody>
             </table>
@@ -100,7 +87,7 @@
             </button>
           </div>
           <div class="modal-body">
-            <form [formGroup]="paymentForm" (ngSubmit)="paymentFormSubmit()">
+            <form [formGroup]="subscriptionForm" (ngSubmit)="subscriptionFormSubmit()">
               
               <input type="hidden" name="_id" class="form-control" formControlName="_id">
               <input type="hidden" name="userid" class="form-control" formControlName="userid">

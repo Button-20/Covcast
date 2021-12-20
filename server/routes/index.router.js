@@ -74,7 +74,7 @@ router.delete('/user/attendance/:id', jwtHelper.verifyJwtToken, ctrlAttendance.d
 router.post('/user/payment/register', jwtHelper.verifyJwtToken, ctrlPayment.register);
 router.get('/user/payment', jwtHelper.verifyJwtToken, ctrlPayment.get);
 router.get('/user/payment/allpaymentcount', jwtHelper.verifyJwtToken, ctrlPayment.getAllCount);
-router.get('/user/payment/:startdate/:enddate', jwtHelper.verifyJwtToken, ctrlPayment.getAllPaymentDateFilter);
+// router.get('/user/payment/:startdate/:enddate', jwtHelper.verifyJwtToken, ctrlPayment.getAllPaymentDateFilter);
 router.get('/user/payment/:id', jwtHelper.verifyJwtToken, ctrlPayment.getID);
 router.get('/user/payment/user/:id', jwtHelper.verifyJwtToken, ctrlPayment.getUserID);
 router.put('/user/payment/:id', jwtHelper.verifyJwtToken, ctrlPayment.put);
