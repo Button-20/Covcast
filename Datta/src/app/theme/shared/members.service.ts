@@ -6,8 +6,6 @@ import { environment } from 'src/environments/environment';
 import { Sms } from './sms.model';
 
 
-
-
 @Injectable({
   providedIn: 'root'
 })
@@ -19,7 +17,7 @@ export class MembersService {
   maleCount: any;
   femaleCount: any;
 
-  noAuthHeader = {headers: new HttpHeaders({'NoAuth' : 'True'})};
+  // noAuthHeader = {headers: new HttpHeaders({'NoAuth' : 'True'})};
 
   constructor(private http: HttpClient) { }
 

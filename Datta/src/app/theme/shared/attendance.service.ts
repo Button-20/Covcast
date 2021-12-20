@@ -18,7 +18,7 @@ export class AttendanceService {
   constructor(private http: HttpClient) { }
 
   postAttendance(attendance: Attendance){
-    return this.http.post(environment.apiBaseUrl+'/user/attendance/register', attendance, this.noAuthHeader);
+    return this.http.post(environment.apiBaseUrl+'/user/attendance/register', attendance);
   }
 
   getAttendanceList(){

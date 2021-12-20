@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-var Member = mongoose.model('Member', {
+var memberSchema = new mongoose.Schema({
     classname: { type: String, ref: 'User' },
     firstname: {
         type: String,
@@ -32,12 +32,7 @@ var Member = mongoose.model('Member', {
     dateofbirth: {
         type: Date,
         required: 'Date of Birth can\'t be empty'
-    },
-    created:{
-        type: Date,
-        default: Date.now()
     }
+}, {timestamps: true});
 
-});
-
-module.exports = { Member };
+module.exports = mongoose.model("Member", memberSchema);

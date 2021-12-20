@@ -133,7 +133,7 @@ export class MembersListComponent implements OnInit {
   }
 
   formattedDate(date) {
-    return moment(date).format("yyyy-MM-DD")
+    return moment(date).format("YYYY-MM-DD")
   }
 
   sendSms(){

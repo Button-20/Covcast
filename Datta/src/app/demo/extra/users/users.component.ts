@@ -36,7 +36,7 @@ export class UsersComponent implements OnInit {
   }
 
   refreshUserList(){
-    this.userService.getuserList().subscribe((res) => {
+    this.userService.getUserList().subscribe((res) => {
       this.userService.users = res as User[];
       // this.totalRecords = this.userService.users.length;
       // this.spinner.hide();

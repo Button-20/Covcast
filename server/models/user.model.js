@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const Schema = mongoose.Schema;
 
-var userSchema = new mongoose.Schema({
+var userSchema = new Schema({
     classname: {
         type: String,
         required: 'Class Name can\'t be empty'
@@ -45,12 +46,12 @@ var userSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
-    created:{
-        type: Date,
-        default: Date.now()
+    subscription: {
+        type: Schema.Types.ObjectId,
+        ref: 'Subscription'
     },
     saltSecret: String
-});
+}, {timestamps: true});
 
 // Custom validation for email
 userSchema.path('email').validate((val) => {
@@ -84,4 +85,4 @@ userSchema.methods.generateJwt = function () {
 }
 
 
-mongoose.model('User', userSchema);
+module.exports = mongoose.model("User", userSchema);

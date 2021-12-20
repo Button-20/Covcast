@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-var Attendance = mongoose.model('Attendance', {
+var attendanceSchema = new Schema({
     userid: {
-        type: String,
+        type: Schema.Types.ObjectId,
         required: 'User ID can\'t be empty',
         ref: 'User'
     },
@@ -31,12 +32,7 @@ var Attendance = mongoose.model('Attendance', {
     present: {
         type: Boolean,
         required: 'Present can\'t be empty',
-    },
-    created:{
-        type: Date,
-        default: Date.now()
     }
+}, {timestamps: true});
 
-});
-
-module.exports = { Attendance };
+module.exports = mongoose.model("Attendance", attendanceSchema);

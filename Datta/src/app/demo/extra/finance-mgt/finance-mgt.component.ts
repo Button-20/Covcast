@@ -63,6 +63,7 @@ export class FinanceMgtComponent implements OnInit {
 
 
   dueFormSubmit(){
+    console.log(this.duesForm.value)
     if(this.duesForm.value._id == null){
       this.duesService.postDues(this.duesForm.value).subscribe(
         res => {
@@ -107,7 +108,6 @@ export class FinanceMgtComponent implements OnInit {
       })   
     }
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'})
-    console.log(this.duesForm.get('membername').value)
   }
 
   onDelete(_id: string){
@@ -133,7 +133,7 @@ export class FinanceMgtComponent implements OnInit {
   }
 
   formattedDate(date) {
-    return moment(date).format("yyyy-MM-DD")
+    return moment(date).format("YYYY-MM-DD")
   }
 
   startSearch(startdate, enddate){

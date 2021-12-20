@@ -1,8 +1,15 @@
 @API_URL = http://localhost:8000/api
 # @API_URL = https://evening-island-44720.herokuapp.com
 @id = 61a2a0b613273118c43432db
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWE1ZmZhOGFiMjQ1MzM0MTBiMzdhNGEiLCJyb2xlIjoiQWRtaW4iLCJjbGFzc25hbWUiOiJCLk8uUC4iLCJwaWMiOiJhc3NldHMvaW1nL2RlZmF1bHQtYXZhdGFyLnBuZyIsImxvZ2luUGVybWlzc2lvbiI6dHJ1ZSwiaWF0IjoxNjM4MzA1MzE4LCJleHAiOjE2MzgzMDg5MTh9.ft6GXmcPRnzgN57ZEey9-OPHKXzk9tKiNs-WP7S_fBY
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWJkY2MzNzQzMGM3NDM4NjQ4OThjZjYiLCJyb2xlIjoiVXNlciIsImNsYXNzbmFtZSI6IkIuTy5QLiIsInBpYyI6ImFzc2V0cy9pbWcvZGVmYXVsdC1hdmF0YXIucG5nIiwibG9naW5QZXJtaXNzaW9uIjp0cnVlLCJpYXQiOjE2NDAwMjMwMDksImV4cCI6MTY0MDAyNjYwOX0.wKFVWQ9bNA0oln9TPXhGBx5IXtLRxdiL2Gk7Cxlz0-s
 @classname = Hawkers
+
+##################################################################
+
+### CHECK SUBSCRIPTION
+
+GET {{API_URL}}/
+Content-Type: application/json
 
 ### REGISTER USER
 
@@ -10,14 +17,15 @@ POST {{API_URL}}/register
 Content-Type: application/json
 
 {
-    "classname": "B.O.P.",
-    "fullname": "Jason Addy",
-    "password": "admin",
-    "phonenumber": "0207410032",
-    "email": "admin@demo.com",
-    "occupation": "Software Developer",
-    "address": "GA-09492843-12",
-    "loginPermission": true
+    "classname": "F.D.P.",
+    "fullname": "Kelvin Morrison",
+    "password": "fridge",
+    "phonenumber": "0550653404",
+    "email": "kelvin@demo.com",
+    "occupation": "Farmer",
+    "address": "GA-094887843-12",
+    "loginPermission": true,
+    "subscriptionPeriod": "2021-12-19T00:00:00.00Z"
 }
 
 ### USER LOGIN
@@ -51,4 +59,58 @@ GET {{API_URL}}/user/members/classname/{{classname}}
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
+
+##################################################################
+
+### POST PAYMENT
+
+POST {{API_URL}}/user/payment/register
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "userid": "61be0575b7d178134c8f2643",
+    "modeOfPayment": "Momo",
+    "subscription_plan": "61c0b5638e498b214820e103",
+    "currencyCode": "$",
+    "amount": 150,
+    "description": "Payment for 1 month"
+}
+
+##################################################################
+
+### GET PAYMENT
+
+GET {{API_URL}}/user/payment
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+##################################################################
+
+### GET RESET PASSWORD
+
+GET {{API_URL}}/reset-password/admin@demo.com
+Content-Type: application/json
+
+##################################################################
+
+### POST PLAN
+
+POST {{API_URL}}/plan/register
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Premium Plan",
+    "price_per_month": 150,
+    "price_per_year": 1600
+}
+
+##################################################################
+
+### GET SUBSCRIPTION
+
+GET {{API_URL}}/subscriptions
+Content-Type: application/json
+Authorization: Bearer {{token}}
 

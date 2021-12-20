@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-var  { Dues } = require('../models/dues.model');
+var  Dues = require('../models/dues.model');
 var ObjectId = require('mongoose').Types.ObjectId;
 
 // Registering Member Dues

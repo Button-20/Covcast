@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-var Dues = mongoose.model('Dues', {
+var duesSchema = new Schema({
     classname: { type: String, ref: 'User' },
     userid: {
-        type: String,
+        type: Schema.Types.ObjectId,
         ref: 'User',
         required: 'User ID can\'t be empty'
     },
@@ -21,12 +22,7 @@ var Dues = mongoose.model('Dues', {
     },
     description:{
         type: String
-    },
-    created:{
-        type: Date,
-        default: Date.now()
     }
+}, {timestamps: true});
 
-});
-
-module.exports = { Dues };
+module.exports = mongoose.model("Dues", duesSchema);

@@ -28,8 +28,12 @@ export class UserService {
     return this.http.post(environment.apiBaseUrl + '/register', user);
   }
 
-   getuserList(){
+  getUserList(){
     return this.http.get(environment.apiBaseUrl + '/users');
+  }
+  
+  getUserByID(_id: string){
+    return this.http.get(environment.apiBaseUrl + `/users/${_id}`);
   }
   
   putUser(user: User){

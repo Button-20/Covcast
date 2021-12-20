@@ -1,4 +1,4 @@
-var  { Member } = require('../models/member.model');
+var Member = require('../models/member.model');
 var ObjectId = require('mongoose').Types.ObjectId;
 var xlsxtojson = require('xlsx-to-json');
 var unirest = require('unirest');
@@ -217,7 +217,7 @@ async function sendSms (req, res, next){
             if (!resp.error)
                return res.status(200).json('Sms Sent Successfully');
             else
-                console.log(res.raw_body)
+               return res.status(400).json(resp.error);
 
         })
 }

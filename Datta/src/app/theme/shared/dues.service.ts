@@ -14,12 +14,12 @@ export class DuesService {
   dues: Dues[];
   Total: DuesTotal[];
 
-  noAuthHeader = {headers: new HttpHeaders({'NoAuth' : 'True'})};
+  // noAuthHeader = {headers: new HttpHeaders({'NoAuth' : 'True'})};
 
   constructor(private http: HttpClient) { }
 
   postDues(dues: Dues){
-    return this.http.post(environment.apiBaseUrl+'/user/dues/register', dues, this.noAuthHeader);
+    return this.http.post(environment.apiBaseUrl+'/user/dues/register', dues);
   }
 
   getDuesList(){

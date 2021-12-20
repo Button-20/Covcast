@@ -1,0 +1,115 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="form-group">
+        <input type="text" class="form-control w-50" id="search" aria-describedby="searchHelp" placeholder="Search" [(ngModel)]="search">
+        <small id="searchHelp" class="form-text text-muted">Search for Payments by ......</small>
+      </div>
+    </div>
+    <div class="col">
+      <div class="form-group d-inline">
+        Date
+        <input class="form-control d-inline" type="date" style="width: 160px;" [(ngModel)]="model.startdate">
+      </div>
+      <div class="form-group d-inline">
+        To
+        <input class="form-control d-inline" type="date" style="width: 160px;" [(ngModel)]="model.enddate">
+      </div>
+    </div>
+    <div class="form-group">
+      <button class="btn btn-info mb-4" type="button" (click)="startSearch(model.startdate, model.enddate)">Search</button>
+      <button class="btn btn-info mb-4" type="button" (click)="clearSearch()">Clear</button>
+      <div class="btn-group mb-4 mr-2" ngbDropdown [placement]="'bottom-left'">
+        <button class="btn btn-outline-dark" ngbDropdownToggle type="button">Export</button>
+        <div ngbDropdownMenu>
+          <a class="dropdown-item" href="javascript:">Excel</a>
+          <a class="dropdown-item" href="javascript:">Pdf</a>
+        </div>
+      </div>  
+      <button class="btn btn-danger mb-4" type="button" (click)="open(content)">Make Payment</button>
+    </div>
+  </div>
+  <div class="row">
+      <div class="col-sm-12">
+        <app-card [hidHeader]="true">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <!-- <th scope="col">#</th> -->
+                  <th scope="col">Transaction Code</th>
+                  <th scope="col">Mode Of Payment</th>
+                  <th scope="col">Type Of Payment</th>
+                  <th scope="col">Currency Code</th>
+                  <th scope="col">Description</th>
+                  <th scope="col">Status</th>
+                  <!-- <th scope="col">Action</th> -->
+                </tr>
+              </thead>
+              <tbody *ngFor="let payment of paymentService.payment">
+              <tr class="read">
+                <!-- <td><img class="rounded-circle" style="width:40px;" src="assets/images/user/avatar-1.jpg" alt="activity-user"></td> -->
+                <td>
+                  <h6 class="mb-1">{{payment.transaction_Code}}</h6>
+                </td>
+                <td>
+                  <h6 class="mb-1">{{payment.modeOfPayment}}</h6>
+                </td>
+                <td>
+                  <h6 class="mb-1">{{payment.typeOfPayment}}</h6>
+                </td>
+                <td>
+                  <h6 class="mb-1">{{payment.currencyCode}}</h6>
+                </td>
+                <td>
+                  <h6 class="mb-1">{{payment.description}}</h6>
+                </td>
+                <td>
+                  <h6 class="mb-1">{{payment.status}}</h6>
+                </td>
+                <td>
+                  <h6 class="mb-1">
+                    <a href="javascript:" class="label bg-success text-white f-12" *ngIf="payment.status == 'Success'">Success</a>
+                    <a href="javascript:" class="label bg-warning text-white f-12" *ngIf="payment.status == 'Pending'">Pending</a>
+                    <a href="javascript:" class="label bg-danger text-white f-12" *ngIf="payment.status == 'Failed'">Failed</a>
+                  </h6>
+                </td>
+                <!-- <td>
+                  <a href="javascript:" class="label theme-bg2 text-white f-12" (click)="onEdit(content, attendance)"><i class="feather icon-edit-2"></i></a>
+                  <a href="javascript:" class="label theme-bg text-white f-12" (click)="onDelete(attendance._id)"><i class="feather icon-trash"></i></a>
+                </td> -->
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </app-card>
+        </div>
+    </div>
+  
+    <ng-template #content let-modal>
+      <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Payment Form</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form [formGroup]="paymentForm" (ngSubmit)="paymentFormSubmit()">
+              
+              <input type="hidden" name="_id" class="form-control" formControlName="_id">
+              <input type="hidden" name="userid" class="form-control" formControlName="userid">
+              <!-- <input type="hidden" name="classname" class="form-control" formControlName="classname"> -->
+    
+    
+                <div class="modal-footer">
+                <button type="submit" class="btn btn-info">Save</button>
+                <button type="button" class="btn btn-outline-dark" (click)="modal.close('Cancel click')">Cancel</button>
+              </div>
+            </form>
+          </div>
+      </div>
+    </ng-template>
+
+  </div>
+  

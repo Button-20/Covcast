@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-var  { Attendance } = require('../models/attendance.model');
+var Attendance = require('../models/attendance.model');
 var ObjectId = require('mongoose').Types.ObjectId;
 
 // Registering Member Attendance
@@ -21,7 +21,7 @@ module.exports.register = (req, res, next) => {
                     res.send(doc);
                 else {
                     if (err.code == 11000)
-                        res.status(422).send(['Duplicate Date found.']);
+                        res.status(422).send(['Duplicate Data found.']);
                     else
                         return next(err);
                 }

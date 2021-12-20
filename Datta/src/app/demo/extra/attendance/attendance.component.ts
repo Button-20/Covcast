@@ -134,7 +134,7 @@ export class AttendanceComponent implements OnInit {
   }
 
   formattedDate(date) {
-    return moment(date).format("yyyy-MM-DD")
+    return moment(date).format("YYYY-MM-DD")
   }
   
   startSearch(startdate, enddate){
