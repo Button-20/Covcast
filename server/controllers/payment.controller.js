@@ -2,58 +2,136 @@ const mongoose = require('mongoose');
 const Payment = require('../models/payment.model');
 const User = require('../models/user.model');
 const Subscription = require('../models/subscription.model');
+const Plan = require('../models/plan.model');
 var ObjectId = mongoose.Types.ObjectId;
 var generator = require('generate-serial-number');
 var prefix = 'CVS';
 
+
 // Registering a Payment
 module.exports.register = (req, res, next) => {
-    var payment = new Payment({
-    userid: req.body.userid,
-    transaction_Code: prefix + generator.generate(10),
-    modeOfPayment: req.body.modeOfPayment,
-    subscription_plan: req.body.subscription_plan,
-    currencyCode: req.body.currencyCode,
-    amount: req.body.amount,
-    description: req.body.description
-    });
-    if (req.body.userid == null || req.body.userid == "" || req.body.modeOfPayment == null || req.body.modeOfPayment == "" || req.body.subscription_plan == null || req.body.subscription_plan == "" || req.body.currencyCode == null || req.body.currencyCode == "" || req.body.amount == null || req.body.amount == ""){
-        res.status(422).send(['Ensure all fields were provided.']);
-    }else{
-        payment.save((err, doc) => {
-            if (!err){
-                res.send(doc)
-                if(doc.amount === 150)
-                    var subscription_end = oneMonthFromNow();
+    if (req.body.type === 'Monthly') {
 
-                var subscription = new Subscription({
-                    userid: doc.userid,
-                    plan_id: doc.subscription_plan,
-                    subscription_end: subscription_end
+        Plan.findById(req.body.subscription_plan, (err, doc) => {
+            if (!err) {
+                var payment = new Payment({
+                    userid: req.body.userid,
+                    transaction_Code: prefix + generator.generate(7),
+                    modeOfPayment: req.body.modeOfPayment,
+                    subscription_plan: req.body.subscription_plan,
+                    currencyCode: req.body.currencyCode,
+                    phonenumber: req.body.phonenumber,
+                    type: req.body.type,
+                    amount: doc.price_per_month,
+                    description: req.body.description
                 });
-                subscription.save((err, doc) => {
-                        if (!err){
-                            var user = {
-                                subscription: doc._id
-                            }             
-                            User.findByIdAndUpdate(doc.userid, {$set: user}, {new: true}, (err, doc) => {
-                                if (!err) { console.log(doc) }
-                                else { console.log('Error in User Update :' + JSON.stringify(err, undefined, 2))}; 
-                            });
-                        }
-                        else 
-                            return next(err);
-                    });        
+                if (req.body.userid == null || req.body.userid == "" || req.body.modeOfPayment == null || req.body.modeOfPayment == "" || req.body.subscription_plan == null || req.body.subscription_plan == "" || req.body.currencyCode == null || req.body.currencyCode == "" || req.body.phonenumber == null || req.body.phonenumber == "" || req.body.type == null || req.body.type == "" || doc.price_per_month == null || doc.price_per_month == ""){
+                    res.status(422).send(['Ensure all fields were provided.']);
+                }else{
+                    payment.save((err, doc) => {
+                            if (!err){
+                                console.log('Payment Added')
+                                var subscription = new Subscription({
+                                    userid: doc.userid,
+                                    plan_id: doc.subscription_plan,
+                                    subscription_end: oneMonthFromNow(),
+                                });
+                                if (doc.userid == null || doc.userid == "" || doc.subscription_plan == null || doc.subscription_plan == ""){
+                                    res.status(422).send(['Ensure all fields were provided.']);
+                                }else{
+                                    subscription.save((err, doc) => {
+                                            if (!err){
+                                                console.log('Subscription Added')
+                                                var user = {
+                                                    subscription: doc._id
+                                                }
+                                        
+                                                User.findByIdAndUpdate(doc.userid, {$set: user}, {new: true}, (err, doc) => {
+                                                    if (!err) { console.log('User Updated'); res.send(doc); }
+                                                    else { console.log('Error in User Update :' + JSON.stringify(err, undefined, 2))}; 
+                                                });                                        
+                                            }
+                                            else 
+                                                return next(err);
+                                        });
+                                }
+                            }
+                            else {
+                                if (err.code == 11000)
+                                    res.status(422).send(['Something went wrong. Please contact admin.']);
+                                else
+                                    return next(err);
+                            }
+            
+                        });
+                }
+            
             }
-            else {
-                if (err.code == 11000)
-                    res.status(422).send(['Duplicate Transaction Code found.']);
-                else
-                    return next(err);
-            }
-
+            else { console.log('Error in Retrieving Plan :' + JSON.stringify(err, undefined, 2))};
         });
-    }
+
+    } else if (req.body.type === 'Yearly'){
+
+        Plan.findById(req.body.subscription_plan, (err, doc) => {
+            if (!err) {
+                var payment = new Payment({
+                    userid: req.body.userid,
+                    transaction_Code: prefix + generator.generate(7),
+                    modeOfPayment: req.body.modeOfPayment,
+                    subscription_plan: req.body.subscription_plan,
+                    currencyCode: req.body.currencyCode,
+                    phonenumber: req.body.phonenumber,
+                    type: req.body.type,
+                    amount: doc.price_per_year,
+                    description: req.body.description
+                });
+                if (req.body.userid == null || req.body.userid == "" || req.body.modeOfPayment == null || req.body.modeOfPayment == "" || req.body.subscription_plan == null || req.body.subscription_plan == "" || req.body.currencyCode == null || req.body.currencyCode == "" || req.body.phonenumber == null || req.body.phonenumber == "" || req.body.type == null || req.body.type == "" || doc.price_per_month == null || doc.price_per_month == ""){
+                    res.status(422).send(['Ensure all fields were provided.']);
+                }else{
+                    payment.save((err, doc) => {
+                            if (!err){
+                                console.log('Payment Added')
+                                var subscription = new Subscription({
+                                    userid: doc.userid,
+                                    plan_id: doc.subscription_plan,
+                                    subscription_end: oneYearFromNow(),
+                                });
+                                if (doc.userid == null || doc.userid == "" || doc.subscription_plan == null || doc.subscription_plan == ""){
+                                    res.status(422).send(['Ensure all fields were provided.']);
+                                }else{
+                                    subscription.save((err, doc) => {
+                                            if (!err){
+                                                console.log('Subscription Added')
+                                                var user = {
+                                                    subscription: doc._id
+                                                }
+                                        
+                                                User.findByIdAndUpdate(doc.userid, {$set: user}, {new: true}, (err, doc) => {
+                                                    if (!err) { console.log('User Updated'); res.send(doc); }
+                                                    else { console.log('Error in User Update :' + JSON.stringify(err, undefined, 2))}; 
+                                                });                                        
+                                            }
+                                            else 
+                                                return next(err);
+                                        });
+                                }
+                            }
+                            else {
+                                if (err.code == 11000)
+                                    res.status(422).send(['Something went wrong. Please contact admin.']);
+                                else
+                                    return next(err);
+                            }
+            
+                        });
+                }
+            
+            }
+            else { console.log('Error in Retrieving Plan :' + JSON.stringify(err, undefined, 2))};
+        });
+        
+    } else
+        res.status(422).send(['Ensure all fields were provided.']);
 }
 
 // Getting all payments array
@@ -89,14 +167,14 @@ module.exports.getUserID = (req, res) => {
 }
 
 
-// // Filter by date
-// module.exports.getAllPaymentDateFilter = (req, res) => {
-//     Payment.find({createdAt: {$gte: req.params.startdate, $lte: req.params.enddate}}, (err, doc) => {
-//         if (!err) { res.send(doc); }
-//         else { console.log('Error in Retrieving Payment with createdAt :' + JSON.stringify(err, undefined, 2))};
-//     });
+// Filter by date
+module.exports.getAllPaymentDateFilter = (req, res) => {
+    Payment.find({createdAt: {$gte: req.params.startdate, $lte: req.params.enddate}}, (err, doc) => {
+        if (!err) { res.send(doc); }
+        else { console.log('Error in Retrieving Payment with createdAt :' + JSON.stringify(err, undefined, 2))};
+    });
 
-// }
+}
 
 
 // Finding an attendance with ID
@@ -141,6 +219,13 @@ module.exports.put = (req, res) => {
 function oneMonthFromNow() {
     var d = new Date(); 
     var targetMonth = d.getMonth() + 1;
+    d.setMonth(targetMonth);
+    return d;
+  }
+
+function oneYearFromNow() {
+    var d = new Date(); 
+    var targetMonth = d.getMonth() + 12;
     d.setMonth(targetMonth);
     return d;
   }

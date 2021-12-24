@@ -5,6 +5,8 @@ import { ToastrService } from 'ngx-toastr';
 import { MembersService } from 'src/app/theme/shared/members.service';
 import { Payment } from 'src/app/theme/shared/payment.model';
 import { PaymentService } from 'src/app/theme/shared/payment.service';
+import { Plan } from 'src/app/theme/shared/plan.model';
+import { PlanService } from 'src/app/theme/shared/plan.service';
 import { UserService } from 'src/app/theme/shared/user.service';
 
 @Component({
@@ -14,15 +16,16 @@ import { UserService } from 'src/app/theme/shared/user.service';
 })
 export class PaymentComponent implements OnInit {
   serverErrorMessages = '';
+  resamount = null;
   paymentForm = new FormGroup({
     _id: new FormControl('', Validators.required),
     userid: new FormControl('', Validators.required),
     modeOfPayment: new FormControl('', Validators.required),
     subscription_plan: new FormControl('', Validators.required),
     currencyCode: new FormControl('', [Validators.required, Validators.minLength(1)]),
-    amount: new FormControl(null, Validators.required),
+    phonenumber: new FormControl('', [Validators.required, Validators.minLength(10)]),
+    type: new FormControl('', Validators.required),
     description: new FormControl(''),
-    status: new FormControl('', Validators.required)
   })
   search: string;
   space: string = " ";
@@ -31,8 +34,9 @@ export class PaymentComponent implements OnInit {
     enddate: ''
   };
   tempSearch;
+  response: any;
 
-  constructor(public memberService: MembersService, private toastr: ToastrService, private userService: UserService, private modalService: NgbModal, public paymentService: PaymentService) { }
+  constructor(private toastr: ToastrService, private userService: UserService, private modalService: NgbModal, public paymentService: PaymentService, public planService: PlanService) { }
 
   ngOnInit() {
     this.refreshPaymentList();
@@ -45,26 +49,34 @@ export class PaymentComponent implements OnInit {
         this.paymentService.payment = res as Payment[];
         // this.totalRecords = this.userService.users.length;
         // this.spinner.hide();
+        this.planService.getPlanList().subscribe(res => {
+          this.planService.plan = res as Plan[];
+        })   
       })
     } else {
       this.paymentService.getPaymentsListByUser(payLoad._id).subscribe(res => {
           this.paymentService.payment = res as Payment[];
       })
-
-      // this.memberService.getMembersClassname(payLoad.classname).subscribe(res => {
-      //   this.memberService.members = res as Members[];
-      // }) 
+      this.planService.getPlanList().subscribe(res => {
+        this.planService.plan = res as Plan[];
+      }) 
     }
   }
 
 
   paymentFormSubmit(){
-      this.memberService.postSms(this.paymentForm.value).subscribe(
+      this.paymentService.postPayment(this.paymentForm.value).subscribe(
         res => {
           this.paymentForm.reset();
+          this.modalService.dismissAll();
+          this.refreshPaymentList();
           this.toastr.success('Payment has been received successfully', 'Payment Sent');
         },
         err => {
+          if (err.status === 422) {
+            this.toastr.warning( this.serverErrorMessages = err.error.join('<br/>'), 'Payment Post Failed')
+          }
+          else
             this.toastr.error( this.serverErrorMessages = 'Something went wrong. Please contact admin.', 'Error 422')
         }
       )
@@ -79,18 +91,18 @@ export class PaymentComponent implements OnInit {
     var payload = this.userService.getUserPayload();
     if (payload) {
       this.paymentForm.patchValue({
-        classname: payload.classname,
+        currencyCode: '¢',
         userid: payload._id,
       })   
     }
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'})
   }
 
-  // startSearch(startdate, enddate){
-  //   this.paymentService.getDateRangeFilter(startdate, enddate).subscribe((res) => {
-  //     this.paymentService.payment = res as Payment[];
-  //   })
-  // }
+  startSearch(startdate, enddate){
+    this.paymentService.getDateRangeFilter(startdate, enddate).subscribe((res) => {
+      this.paymentService.payment = res as Payment[];
+    })
+  }
 
   clearSearch(){
     this.tempSearch = '';

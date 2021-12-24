@@ -17,8 +17,8 @@
       </div>
     </div>
     <div class="form-group">
-      <!-- <button class="btn btn-info mb-4" type="button" (click)="startSearch(model.startdate, model.enddate)">Search</button>
-      <button class="btn btn-info mb-4" type="button" (click)="clearSearch()">Clear</button> -->
+      <button class="btn btn-info mb-4" type="button" (click)="startSearch(model.startdate, model.enddate)">Search</button>
+      <button class="btn btn-info mb-4" type="button" (click)="clearSearch()">Clear</button>
       <div class="btn-group mb-4 mr-2" ngbDropdown [placement]="'bottom-left'">
         <button class="btn btn-outline-dark" ngbDropdownToggle type="button">Export</button>
         <div ngbDropdownMenu>
@@ -45,7 +45,7 @@
                   <th scope="col">Action</th>
                 </tr>
               </thead>
-              <tbody *ngFor="let subscription of subscriptionService.subscription">
+              <tbody *ngFor="let subscription of subscriptionService.subscription | subFilter: search">
               <tr class="read">
                 <!-- <td><img class="rounded-circle" style="width:40px;" src="assets/images/user/avatar-1.jpg" alt="activity-user"></td> -->
                 <td>
@@ -81,7 +81,7 @@
     <ng-template #content let-modal>
       <div class="modal-content">
           <div class="modal-header">
-            <h4 class="modal-title" id="modal-basic-title">Payment Form</h4>
+            <h4 class="modal-title" id="modal-basic-title">Subscription Form</h4>
             <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -90,9 +90,57 @@
             <form [formGroup]="subscriptionForm" (ngSubmit)="subscriptionFormSubmit()">
               
               <input type="hidden" name="_id" class="form-control" formControlName="_id">
-              <input type="hidden" name="userid" class="form-control" formControlName="userid">
-              <!-- <input type="hidden" name="classname" class="form-control" formControlName="classname"> -->
-    
+
+              <div class="form-group">
+                <label for="userid">User</label>
+                <div class="input-group">
+                  <select id="userid" class="form-control" name="userid" formControlName="userid" [ngClass]="(subscriptionForm.get('userid').touched || subscriptionForm.get('userid').dirty) && subscriptionForm.get('userid').errors ? 'is-invalid' : ''" required>
+                    <option value="" disabled>Select User</option>
+                    <option *ngFor="let user of userService.users" [ngValue]="user._id" >{{user.fullname}}</option>
+                  </select>
+                  <div *ngIf="subscriptionForm.get('userid').invalid && (subscriptionForm.get('userid').dirty || subscriptionForm.get('userid').touched)" class="invalid-feedback">
+                      <div *ngIf="subscriptionForm.get('userid').errors.required">
+                      This field is required
+                      </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="plan_id">Subscription Plan</label>
+                <div class="input-group">
+                  <select id="plan_id" class="form-control" name="plan_id" formControlName="plan_id" [ngClass]="(subscriptionForm.get('plan_id').touched || subscriptionForm.get('plan_id').dirty) && subscriptionForm.get('plan_id').errors ? 'is-invalid' : ''" required>
+                    <option value="" disabled>Select Subscription Plan</option>
+                    <option *ngFor="let plan of planService.plan" [ngValue]="plan._id" >{{plan.name}}</option>
+                  </select>
+                  <div *ngIf="subscriptionForm.get('plan_id').invalid && (subscriptionForm.get('plan_id').dirty || subscriptionForm.get('plan_id').touched)" class="invalid-feedback">
+                      <div *ngIf="subscriptionForm.get('plan_id').errors.required">
+                      This field is required
+                      </div>
+                  </div>
+                </div>
+              </div>
+              
+              <label>Type of Subscription:</label>
+              <div class="form-group">
+                <div class="col">
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="modeOfPayment" id="exampleRadios1" value="Monthly" formControlName="type" checked>
+                    <label class="form-check-label" for="exampleRadios1">
+                      Monthly
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="modeOfPayment" id="exampleRadios2" value="Yearly" formControlName="type">
+                    <label class="form-check-label" for="exampleRadios2">
+                      Yearly
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+
+
     
                 <div class="modal-footer">
                 <button type="submit" class="btn btn-info">Save</button>

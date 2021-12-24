@@ -1,0 +1,162 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="form-group">
+        <input type="text" class="form-control w-50" id="search" aria-describedby="searchHelp" placeholder="Search" [(ngModel)]="search">
+        <small id="searchHelp" class="form-text text-muted">Search for Task by Name, Start Date, End Date, Status or Description</small>
+      </div>
+    </div>
+    <div class="col">
+      <div class="form-group d-inline">
+        Start Date
+        <input class="form-control d-inline" type="date" style="width: 160px;" [(ngModel)]="model.startdate">
+      </div>
+      <div class="form-group d-inline">
+        To &nbsp;
+        End Date
+        <input class="form-control d-inline" type="date" style="width: 160px;" [(ngModel)]="model.enddate">
+      </div>
+    </div>
+    <div class="form-group">
+      <button class="btn btn-info mb-4" type="button" (click)="startSearch(model.startdate, model.enddate)">Search</button>
+      <button class="btn btn-info mb-4" type="button" (click)="clearSearch()">Clear</button>
+      <button class="btn btn-danger mb-4" type="button" (click)="open(content)">Add Task</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xl-4 col-md-6" *ngFor="let task of taskService.task | taskFilter: search">
+      <div class="card" [ngClass]="[task.status === 'Completed' ? 'bg-c-green' : '', task.status === 'Canceled' || task.status === 'Overdue' ? 'bg-c-red' : '', task.status === 'In-Progress' ? 'bg-c-yellow' : '', task.status === 'Not Started' ? 'bg-c-blue' : '']">
+        <div class="card-header borderless">
+          <h5 class="text-white">{{task.name}}</h5>
+          <div class="card-header-right">
+            <div class="btn-group card-option dropdown" ngbDropdown>
+              <button type="button" class="btn dropdown-toggle btn-icon" ngbDropdownToggle>
+                <i class="feather icon-more-horizontal"></i>
+              </button>
+              <ul class="list-unstyled card-option dropdown-menu" ngbDropdownMenu>
+                <li class="dropdown-item close-card" (click)="onEdit(content, task)"><a href="javascript:"><i class="feather icon-edit-2"></i> Edit</a></li>
+                <li class="dropdown-item close-card" (click)="onDelete(task._id)"><a href="javascript:"><i class="feather icon-trash"></i> Remove</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="card-block" style="padding:0 25px;">
+          <div class="earning-text mb-0" style="height:180px;">
+            <h3 class="mb-2 text-white f-w-300 ">Description: <i class="feather icon-arrow-down teal accent-3"></i></h3>
+            <span class="text-uppercase text-white d-block">{{task.description}}</span>
+          </div>
+          <div>
+            <p class="text-white"><i class="feather icon-calendar"></i> End Date: {{task.enddate | date: 'yyyy/M/dd'}}</p>
+            <p class="text-white"><i class="feather icon-check-circle"></i> Status: {{task.status}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+    <ng-template #content let-modal>
+      <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Task Form</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form [formGroup]="taskForm" (ngSubmit)="taskFormSubmit()">
+              
+              <input type="hidden" name="_id" class="form-control" formControlName="_id">
+              <input type="hidden" name="classname" class="form-control" formControlName="classname">
+              <input type="hidden" name="userid" class="form-control" formControlName="userid">
+    
+              <div class="form-group">
+                <label for="name">Name</label>
+                <div class="input-group">
+                  <input id="name" class="form-control" placeholder="Task Name" name="name" type="text" formControlName="name" [ngClass]="(taskForm.get('name').touched || taskForm.get('name').dirty) && taskForm.get('name').errors ? 'is-invalid' : ''" required>
+                  <div *ngIf="taskForm.get('name').invalid && (taskForm.get('name').dirty || taskForm.get('name').touched)" class="invalid-feedback">
+                      <div *ngIf="taskForm.get('name').errors.required">
+                      This field is required
+                      </div>
+                  </div>
+                </div>
+              </div>
+    
+              <div class="form-group">
+                <label for="description">Description</label>
+                <div class="input-group">
+                  <textarea class="form-control" name="description" id="description" placeholder="Task Description" formControlName="description" cols="30" rows="10"></textarea>
+                  <!-- <input id="description"   name="description" type="text" > -->
+                </div>
+              </div>
+
+              <label for="status">Status</label>
+              <div class="form-group">
+                <div class="col">
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="status" id="exampleRadios1" value="Completed" formControlName="status" checked>
+                    <label class="form-check-label" for="exampleRadios1">
+                      Completed
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="status" id="exampleRadios2" value="In-Progress" formControlName="status">
+                    <label class="form-check-label" for="exampleRadios2">
+                      In-Progress
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="status" id="exampleRadios3" value="Not Started" formControlName="status">
+                    <label class="form-check-label" for="exampleRadios3">
+                      Not Started
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="status" id="exampleRadios4" value="Canceled" formControlName="status">
+                    <label class="form-check-label" for="exampleRadios4">
+                      Canceled
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="status" id="exampleRadios5" value="Overdue" formControlName="status">
+                    <label class="form-check-label" for="exampleRadios5">
+                      Overdue
+                    </label>
+                  </div>
+                </div>
+              </div>
+    
+              <div class="form-group">
+                <label for="startdate">Start Date</label>
+                <div class="input-group">
+                  <input id="startdate" class="form-control" name="startdate" type="date" formControlName="startdate" [ngClass]="(taskForm.get('startdate').touched || taskForm.get('startdate').dirty) && taskForm.get('startdate').errors ? 'is-invalid' : ''" required>
+                  <div *ngIf="taskForm.get('startdate').invalid && (taskForm.get('startdate').dirty || taskForm.get('startdate').touched)" class="invalid-feedback">
+                      <div *ngIf="taskForm.get('startdate').errors.required">
+                      This field is required
+                      </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="enddate">End Date</label>
+                <div class="input-group">
+                  <input id="enddate" class="form-control" name="enddate" type="date" formControlName="enddate" [ngClass]="(taskForm.get('enddate').touched || taskForm.get('enddate').dirty) && taskForm.get('enddate').errors ? 'is-invalid' : ''" required>
+                  <div *ngIf="taskForm.get('enddate').invalid && (taskForm.get('enddate').dirty || taskForm.get('enddate').touched)" class="invalid-feedback">
+                      <div *ngIf="taskForm.get('enddate').errors.required">
+                      This field is required
+                      </div>
+                  </div>
+                </div>
+              </div>
+                   
+                <div class="modal-footer">
+                <button type="submit" class="btn btn-info">Save</button>
+                <button type="button" class="btn btn-outline-dark" (click)="modal.close('Cancel click')">Cancel</button>
+              </div>
+            </form>
+          </div>
+      </div>
+    </ng-template>
+
+  </div>
+  

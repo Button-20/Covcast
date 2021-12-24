@@ -6,6 +6,7 @@ import {SharedModule} from '../../../theme/shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SubscriptionRoutingModule } from './subscription-routing.module';
 import { NgbButtonsModule, NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { SubscriptionFilterPipe } from './subscription-filter.pipe';
 
 @NgModule({
   imports: [
@@ -18,6 +19,6 @@ import { NgbButtonsModule, NgbDropdownModule, NgbTooltipModule } from '@ng-boots
     NgbTooltipModule
 
   ],
-  declarations: [SubscriptionComponent]
+  declarations: [SubscriptionComponent, SubscriptionFilterPipe]
 })
 export class SubscriptionModule { }

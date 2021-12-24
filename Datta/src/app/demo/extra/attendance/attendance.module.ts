@@ -19,6 +19,6 @@ import { AttenmemPipe } from './filters/attenmem.pipe';
     NgbTooltipModule,
     AttendanceRoutingModule
   ],
-  declarations: [AttendanceComponent, AttendanceFilterPipe, AttendanceFilterPipe, AttenmemPipe]
+  declarations: [AttendanceComponent, AttendanceFilterPipe, AttenmemPipe]
 })
 export class AttendanceModule { }

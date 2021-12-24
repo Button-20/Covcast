@@ -1,7 +1,7 @@
 @API_URL = http://localhost:8000/api
 # @API_URL = https://evening-island-44720.herokuapp.com
 @id = 61a2a0b613273118c43432db
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWJkY2MzNzQzMGM3NDM4NjQ4OThjZjYiLCJyb2xlIjoiVXNlciIsImNsYXNzbmFtZSI6IkIuTy5QLiIsInBpYyI6ImFzc2V0cy9pbWcvZGVmYXVsdC1hdmF0YXIucG5nIiwibG9naW5QZXJtaXNzaW9uIjp0cnVlLCJpYXQiOjE2NDAwMjMwMDksImV4cCI6MTY0MDAyNjYwOX0.wKFVWQ9bNA0oln9TPXhGBx5IXtLRxdiL2Gk7Cxlz0-s
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWJkY2MzNzQzMGM3NDM4NjQ4OThjZjYiLCJyb2xlIjoiQWRtaW4iLCJjbGFzc25hbWUiOiJBZG1pbiIsInBpYyI6ImFzc2V0cy9pbWcvZGVmYXVsdC1hdmF0YXIucG5nIiwibG9naW5QZXJtaXNzaW9uIjp0cnVlLCJpYXQiOjE2NDAzNTQxNjQsImV4cCI6MTY0MDM1Nzc2NH0.Ul8ncwUojJUHPzxlxyMk88ec8azRm3qs6uEn4k1VAT8
 @classname = Hawkers
 
 ##################################################################
@@ -73,7 +73,8 @@ Authorization: Bearer {{token}}
     "modeOfPayment": "Momo",
     "subscription_plan": "61c0b5638e498b214820e103",
     "currencyCode": "$",
-    "amount": 150,
+    "phone_number": "0550653404",
+    "type": "Monthly",
     "description": "Payment for 1 month"
 }
 
@@ -114,3 +115,29 @@ GET {{API_URL}}/subscriptions
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
+##################################################################
+
+### GET PLAN BY NAME
+
+GET {{API_URL}}/plan/doc/Premium Plan
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+##################################################################
+
+### POST TASK
+
+POST {{API_URL}}/user/task/register
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "startdate": "2021-12-24T00:00:00.000Z",
+  "_id": "61c5aace8f2f0c1c046d651d",
+  "userid": "61bdcc37430c743864898cf6",
+  "classname": "Admin",
+  "name": "Test Tasks 2",
+  "description": "This task has to change it's state when it's 2:00",
+  "status": "In-Progress",
+  "enddate": "2021-12-24T14:00:00.000Z"
+}

@@ -52,7 +52,7 @@ const NavigationItems = [
         id: 'Members',
         title: 'Members',
         type: 'item',
-        url: '/members-list',
+        url: '/mgt/members-list',
         icon: 'feather icon-users',
         classes: 'nav-item',
       },
@@ -60,7 +60,7 @@ const NavigationItems = [
         id: 'Finances',
         title: 'Finances',
         type: 'item',
-        url: '/finance-mgt',
+        url: '/mgt/finance-mgt',
         icon: 'feather icon-file-text',
         classes: 'nav-item',
       },
@@ -68,10 +68,18 @@ const NavigationItems = [
         id: 'Attendance',
         title: 'Attendance',
         type: 'item',
-        url: '/attendance',
+        url: '/mgt/attendance',
         icon: 'feather icon-user',
         classes: 'nav-item',
       },
+      {
+        id: 'Tasks',
+        title: 'Tasks',
+        type: 'item',
+        url: '/mgt/premium/tasks',
+        icon: 'feather icon-user',
+        classes: 'nav-item',
+      }
     ]
   },
   // {
@@ -253,7 +261,7 @@ const NavigationItems = [
         type: 'item',
         url: '/services/payment',
         classes: 'nav-item',
-        icon: 'ti-money'
+        icon: 'feather icon-file-text'
       },
       {
         id: 'subscription',
@@ -261,7 +269,7 @@ const NavigationItems = [
         type: 'item',
         url: '/services/plan/subscription',
         classes: 'nav-item',
-        icon: 'ti-money'
+        icon: 'feather icon-check-circle'
       },
       // {
       //   id: 'disabled-menu',

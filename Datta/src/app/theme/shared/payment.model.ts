@@ -5,7 +5,9 @@ export class Payment {
     modeOfPayment: string;
     subscription_plan: string;
     currencyCode: string;
-    amount: number;
+    type: string;
+    phonenumber: string;
     description: string;
     status: string;
+    createdAt: string;
 }

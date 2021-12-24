@@ -46,6 +46,14 @@ module.exports.getID = (req, res) => {
         });
 }
 
+// Finding a Plan with Name
+module.exports.getByName = (req, res) => {
+        Plan.findOne({name: req.params.name}, (err, doc) => {
+            if (!err) { res.send(doc); }
+            else { console.log('Error in Retrieving Plan :' + JSON.stringify(err, undefined, 2))};
+        });
+}
+
 // Finding all Plan Count
 module.exports.getCount = (req, res) => {
         Plan.countDocuments({}, (err, doc) => {

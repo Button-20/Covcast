@@ -39,18 +39,18 @@ const routes: Routes = [
       {
         path: 'users',
         loadChildren: () => import('./demo/extra/users/users.module').then(m => m.UsersModule),
-        canActivate:[RestrictGuard],
+        canActivate:[RestrictGuard]
       },
       {
-        path: 'members-list',
+        path: 'mgt/members-list',
         loadChildren: () => import('./demo/extra/members-list/members-list.module').then(m => m.MembersListModule)
       },
       {
-        path: 'finance-mgt',
+        path: 'mgt/finance-mgt',
         loadChildren: () => import('./demo/extra/finance-mgt/finance-mgt.module').then(m => m.FinanceMgtModule)
       },
       {
-        path: 'attendance',
+        path: 'mgt/attendance',
         loadChildren: () => import('./demo/extra/attendance/attendance.module').then(m => m.AttendanceModule)
       },
       {
@@ -63,7 +63,13 @@ const routes: Routes = [
       },
       {
         path: 'services/plan/subscription',
-        loadChildren: () => import('./demo/extra/subscription/subscription.module').then(m => m.SubscriptionModule)
+        loadChildren: () => import('./demo/extra/subscription/subscription.module').then(m => m.SubscriptionModule),
+        canActivate:[RestrictGuard]
+      },
+      {
+        path: 'mgt/premium/tasks',
+        loadChildren: () => import('./demo/extra/task/task.module').then(m => m.TaskModule)
+        // canActivate:[RestrictGuard]
       }
     ]
   },

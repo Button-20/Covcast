@@ -74,7 +74,7 @@ router.delete('/user/attendance/:id', jwtHelper.verifyJwtToken, ctrlAttendance.d
 router.post('/user/payment/register', jwtHelper.verifyJwtToken, ctrlPayment.register);
 router.get('/user/payment', jwtHelper.verifyJwtToken, ctrlPayment.get);
 router.get('/user/payment/allpaymentcount', jwtHelper.verifyJwtToken, ctrlPayment.getAllCount);
-// router.get('/user/payment/:startdate/:enddate', jwtHelper.verifyJwtToken, ctrlPayment.getAllPaymentDateFilter);
+router.get('/user/payment/:startdate/:enddate', jwtHelper.verifyJwtToken, ctrlPayment.getAllPaymentDateFilter);
 router.get('/user/payment/:id', jwtHelper.verifyJwtToken, ctrlPayment.getID);
 router.get('/user/payment/user/:id', jwtHelper.verifyJwtToken, ctrlPayment.getUserID);
 router.put('/user/payment/:id', jwtHelper.verifyJwtToken, ctrlPayment.put);
@@ -86,12 +86,14 @@ router.get('/user/task/:id', jwtHelper.verifyJwtToken, ctrlTask.getID);
 router.get('/user/taskcount/:classname', jwtHelper.verifyJwtToken, ctrlTask.getCount);
 router.get('/user/alltaskcount', jwtHelper.verifyJwtToken, ctrlTask.getAllCount);
 router.get('/user/task/classname/:classname', jwtHelper.verifyJwtToken, ctrlTask.getClassname);
+router.get('/user/task/:startdate/:enddate', jwtHelper.verifyJwtToken, ctrlTask.getAllTaskDateFilter);
 router.put('/user/task/:id', jwtHelper.verifyJwtToken, ctrlTask.put);
 router.delete('/user/task/:id', jwtHelper.verifyJwtToken, ctrlTask.delete);
 
 // Plan => localhost:3000/api/.......
 router.post('/plan/register', jwtHelper.verifyJwtToken, ctrlPlan.register);
 router.get('/plan', jwtHelper.verifyJwtToken, ctrlPlan.get);
+router.get('/plan/doc/:name', jwtHelper.verifyJwtToken, ctrlPlan.getByName);
 router.get('/plan/:id', jwtHelper.verifyJwtToken, ctrlPlan.getID);
 router.get('/allplancount', jwtHelper.verifyJwtToken, ctrlPlan.getCount);
 router.put('/plan/:id', jwtHelper.verifyJwtToken, ctrlPlan.put);
@@ -102,6 +104,7 @@ router.post('/subscription/register', jwtHelper.verifyJwtToken, ctrlSubscription
 router.get('/subscriptions', jwtHelper.verifyJwtToken, ctrlSubscription.get);
 router.get('/subscription/:id', jwtHelper.verifyJwtToken, ctrlSubscription.getID);
 router.get('/allsubscriptioncount', jwtHelper.verifyJwtToken, ctrlSubscription.getCount);
+router.get('/subscription/:startdate/:enddate', jwtHelper.verifyJwtToken, ctrlSubscription.getAllSubscriptionDateFilter);
 router.put('/subscription/:id', jwtHelper.verifyJwtToken, ctrlSubscription.put);
 // router.delete('/plan/:id', jwtHelper.verifyJwtToken, ctrlSubscription.delete);
 

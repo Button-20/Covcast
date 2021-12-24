@@ -44,11 +44,12 @@
                   <th scope="col">Currency Code</th>
                   <th scope="col">Amount</th>
                   <th scope="col">Description</th>
+                  <th scope="col">Date of Payment</th>
                   <th scope="col">Status</th>
                   <!-- <th scope="col">Action</th> -->
                 </tr>
               </thead>
-              <tbody *ngFor="let payment of paymentService.payment">
+              <tbody *ngFor="let payment of paymentService.payment | paymentFilter: search">
               <tr class="read">
                 <!-- <td><img class="rounded-circle" style="width:40px;" src="assets/images/user/avatar-1.jpg" alt="activity-user"></td> -->
                 <td>
@@ -71,6 +72,9 @@
                 </td>
                 <td>
                   <h6 class="mb-1">{{payment.description}}</h6>
+                </td>
+                <td>
+                  <h6 class="mb-1">{{payment.createdAt | date: "yyyy/M/dd"}}</h6>
                 </td>
                 <td>
                   <h6 class="mb-1">
@@ -104,8 +108,81 @@
               
               <input type="hidden" name="_id" class="form-control" formControlName="_id">
               <input type="hidden" name="userid" class="form-control" formControlName="userid">
-              <!-- <input type="hidden" name="classname" class="form-control" formControlName="classname"> -->
-    
+              <input type="hidden" name="currencyCode" class="form-control" formControlName="currencyCode">
+
+              <label>Mode of Payment:</label>
+              <div class="form-group">
+                <div class="col">
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="modeOfPayment" id="exampleRadios1" value="MTN" formControlName="modeOfPayment" checked>
+                    <label class="form-check-label" for="exampleRadios1">
+                      MTN
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="modeOfPayment" id="exampleRadios2" value="VODAFONE" formControlName="modeOfPayment">
+                    <label class="form-check-label" for="exampleRadios2">
+                      VODAFONE
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <label>Type of Payment:</label>
+              <div class="form-group">
+                <div class="col">
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="type" id="radio1" value="Monthly" formControlName="type" checked>
+                    <label class="form-check-label" for="radio1">
+                      Monthly
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="type" id="radio2" value="Yearly" formControlName="type">
+                    <label class="form-check-label" for="radio2">
+                      Yearly
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="phonenumber">Phone Number</label>
+                <div class="input-group">
+                  <input id="phonenumber" class="form-control" placeholder="Phone Number" name="phonenumber" type="tel" maxlength="10" formControlName="phonenumber" [ngClass]="(paymentForm.get('phonenumber').touched || paymentForm.get('phonenumber').dirty) && paymentForm.get('phonenumber').errors ? 'is-invalid' : ''" required>
+                  <div *ngIf="paymentForm.get('phonenumber').invalid && (paymentForm.get('phonenumber').dirty || paymentForm.get('phonenumber').touched)" class="invalid-feedback">
+                      <div *ngIf="paymentForm.get('phonenumber').errors.required">
+                      This field is required
+                      </div>
+                      <div *ngIf="paymentForm.get('phonenumber').errors.maxlength">
+                        Maximum 10 characters
+                      </div>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="form-group">
+                <label for="subscription_plan">Subscription Plan</label>
+                <div class="input-group">
+                  <select id="subscription_plan" class="form-control" name="subscription_plan" formControlName="subscription_plan" [ngClass]="(paymentForm.get('subscription_plan').touched || paymentForm.get('subscription_plan').dirty) && paymentForm.get('subscription_plan').errors ? 'is-invalid' : ''" required>
+                    <option value="" disabled>Select Subscription Plan</option>
+                    <option *ngFor="let plan of planService.plan" [ngValue]="plan._id" >{{plan.name}}</option>
+                  </select>
+                  <div *ngIf="paymentForm.get('subscription_plan').invalid && (paymentForm.get('subscription_plan').dirty || paymentForm.get('subscription_plan').touched)" class="invalid-feedback">
+                      <div *ngIf="paymentForm.get('subscription_plan').errors.required">
+                      This field is required
+                      </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="description">Description</label>
+                <div class="input-group">
+                  <input id="description" class="form-control" name="description" type="text" formControlName="description" placeholder="Description">
+                </div>
+              </div>
     
                 <div class="modal-footer">
                 <button type="submit" class="btn btn-info">Save</button>

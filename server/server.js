@@ -6,10 +6,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const passport = require('passport');
-const cron = require('node-cron');
+const schedule = require('node-schedule');
 const rtsIndex = require('./routes/index.router');
 const User = require('./models/user.model');
 const Subscription = require('./models/subscription.model');
+const Task = require('./models/task.model');
 
 
 var app = express();
@@ -49,8 +50,8 @@ app.use((err, req, res, next) => {
 app.listen(process.env.PORT, () => {
   console.log(`Server started at port : ${process.env.PORT}`)
 
-  cron.schedule('* * * * *', () => {
-    // console.log('Runs every minute');
+  schedule.scheduleJob('0 0 * * *', function(){
+    console.log('Runs every minute');
 
 // Checks for user login permissions and put them at their rightful positions
     User.find((err, docs) => {
@@ -80,7 +81,8 @@ app.listen(process.env.PORT, () => {
             });
             console.log('User cannot login but Subscription Period is yet to come')
 
-          }
+          }else
+            console.log(!err ? 'User Checks Done' : 'Error in retrieving subscriptions for a User:' + JSON.stringify(err, undefined, 2))
         })
       }
       else { console.log('Error in retrieving Users :' + JSON.stringify(err, undefined, 2))}
@@ -114,7 +116,8 @@ app.listen(process.env.PORT, () => {
             });
             console.log('Subscription Period is yet to come and Status is Inactive')
             
-          }
+          } else
+            console.log(!err ? 'Subscription Checks Done' : 'Error in retrieving subscription' + JSON.stringify(err, undefined, 2))
         })
       }
       else { console.log('Error in retrieving subscriptions:' + JSON.stringify(err, undefined, 2))}

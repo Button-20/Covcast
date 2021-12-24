@@ -25,6 +25,14 @@ var paymentSchema = new Schema({
         type: String,
         required: 'Currency Code can\'t be empty'
     },
+    phonenumber: {
+        type: String,
+        required: 'Phone Number can\'t be empty'
+    },
+    type:{
+        type: String,
+        required: 'Type can\'t be empty'
+    },
     amount: {
         type: Number,
         required: 'Amount can\'t be empty'

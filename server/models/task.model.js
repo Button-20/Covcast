@@ -17,7 +17,7 @@ var taskSchema = new Schema({
         required: 'Task Name can\'t be empty'
     },
     description: {
-        type: Date
+        type: String
     },
     status: {
         type: String,

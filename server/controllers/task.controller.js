@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 var Task = require('../models/task.model');
-var ObjectId = require('mongoose').Types.ObjectId;
+var ObjectId = mongoose.Types.ObjectId;
+const schedule = require('node-schedule');
+
 
 // Registering Task
 module.exports.register = (req, res, next) => {
@@ -17,8 +19,19 @@ module.exports.register = (req, res, next) => {
         res.status(422).send(['Ensure all fields were provided.']);
     }else{
         task.save((err, doc) => {
-                if (!err)
-                    res.send(doc);
+                if (!err){
+                  res.send(doc);
+                  var data = {
+                    status: 'Overdue'
+                  }
+                  schedule.scheduleJob(doc.enddate, function(){
+                    Task.findByIdAndUpdate(doc._id, {$set: data}, {new: true}, (err, doc) => {
+                        if (!err) { console.log(doc) }
+                        else { console.log('Error in Task Update :' + JSON.stringify(err, undefined, 2))}; 
+                      });
+                      console.log('Task is Overdue')          
+                  })
+                }
                 else
                     return next(err);
             });
@@ -49,9 +62,9 @@ module.exports.getCount = (req, res) => {
     });
 }
 
-// Filter by date
+// Filter by startdate
 module.exports.getAllTaskDateFilter = (req, res) => {
-    Task.find({date: {$gte: req.params.startdate, $lte: req.params.enddate}}, (err, doc) => {
+    Task.find({startdate: {$gte: req.params.startdate}, enddate: {$lte: req.params.enddate}}, (err, doc) => {
         if (!err) { res.send(doc); }
         else { console.log('Error in Retrieving Task with Date :' + JSON.stringify(err, undefined, 2))};
     });
@@ -93,9 +106,24 @@ module.exports.put = (req, res) => {
             startdate: req.body.startdate,
             enddate: req.body.enddate
         };
-        
+        console.log('Passed Update')
+
         Task.findByIdAndUpdate(req.params.id, {$set: task}, {new: true}, (err, doc) => {
-            if (!err) { res.send(doc); }
+            if (!err) {
+                res.send(doc)
+                schedule.scheduleJob('Check End Date', doc.enddate, function(){
+                    console.log('Passed cron')
+                    var data = {
+                        status: 'Overdue'
+                      }
+                    Task.findByIdAndUpdate(doc._id, {$set: data}, {new: true}, (err, doc) => {
+                        if (!err) { console.log(doc) }
+                        else { console.log('Error in Task Update :' + JSON.stringify(err, undefined, 2))}; 
+                        });
+                        console.log('Task is Overdue')
+                        schedule.cancelJob('Check End Date');
+                    })
+            }
             else { console.log('Error in Task Update :' + JSON.stringify(err, undefined, 2))}; 
         });
 }

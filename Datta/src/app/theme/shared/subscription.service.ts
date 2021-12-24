@@ -28,6 +28,10 @@ export class SubscriptionService {
     return this.http.get(environment.apiBaseUrl + '/allsubscriptioncount');
   }
 
+  getDateRangeFilter(startdate: string, enddate: string){
+    return this.http.get(environment.apiBaseUrl + `/subscription/${startdate}/${enddate}`);
+  }
+
   updateSubscription(subscription: Subscription){
     return this.http.put(environment.apiBaseUrl + `/subscription/${subscription._id}`, subscription);
   }

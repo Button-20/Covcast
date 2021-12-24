@@ -107,7 +107,7 @@
                   <div class="input-group-prepend">
                     <span class="input-group-text">&cent;</span>
                   </div>
-                  <input id="amount" class="form-control" placeholder="Amount" name="amount" type="number" formControlName="amount" [ngClass]="(duesForm.get('amount').touched || duesForm.get('amount').dirty) && duesForm.get('amount').errors ? 'is-invalid' : ''" required>
+                  <input id="amount" class="form-control" placeholder="Amount" name="amount" type="number" min="0" formControlName="amount" [ngClass]="(duesForm.get('amount').touched || duesForm.get('amount').dirty) && duesForm.get('amount').errors ? 'is-invalid' : ''" required>
                   <div *ngIf="duesForm.get('amount').invalid && (duesForm.get('amount').dirty || duesForm.get('amount').touched)" class="invalid-feedback">
                       <div *ngIf="duesForm.get('amount').errors.required">
                       This field is required
