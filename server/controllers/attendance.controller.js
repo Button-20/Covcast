@@ -268,12 +268,12 @@ module.exports.downloadExcel = async (req, res) => {
                 const route = path.join('./exports/attendances');  // Path to download excel
                     
                 try {
-                    const data = await workbook.xlsx.writeFile(`${route}/${Date.now()}__Attendance__Export.xlsx`)
+                    const data = await workbook.xlsx.writeFile(`${route}/${Date.now()}__Attendances__Export.xlsx`)
                      .then(() => {
                        res.send({
                          status: "Success",
                          message: "File successfully downloaded",
-                         path: `${route}/${Date.now()}__Attendance__Export.xlsx`,
+                         path: `${route}/${Date.now()}__Attendances__Export.xlsx`,
                         });
                      });
                 } catch (err) {
