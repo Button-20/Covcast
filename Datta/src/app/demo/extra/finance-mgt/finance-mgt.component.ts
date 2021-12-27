@@ -8,6 +8,7 @@ import * as moment from 'moment';
 import { DuesService } from 'src/app/theme/shared/dues.service';
 import { Dues } from 'src/app/theme/shared/dues.model';
 import { UserService } from 'src/app/theme/shared/user.service';
+import * as FileSaver from 'file-saver';
 
 
 @Component({
@@ -25,6 +26,12 @@ export class FinanceMgtComponent implements OnInit {
     dateofpayment: new FormControl('', Validators.required),
     description: new FormControl(''),
   })
+  uploadForm = new FormGroup({
+    source: new FormControl('', Validators.required),
+    file: new FormControl(null),
+    userid: new FormControl('', Validators.required)
+  })
+  serverServerMessages: any;
   serverErrorMessages = '';
   search: string;
   space: string = " ";
@@ -34,6 +41,7 @@ export class FinanceMgtComponent implements OnInit {
     enddate: ''
   }
   tempSearch;
+
   
   constructor(public duesService: DuesService, private userService: UserService, public memberService: MembersService, private modalService: NgbModal, private toastr: ToastrService) { }
 
@@ -152,6 +160,60 @@ export class FinanceMgtComponent implements OnInit {
       }
       
       this.refreshDuesList();
+  }
+
+  openUpload(content) {
+    this.uploadForm.reset();
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'})
+  }
+
+  onFileChange(event){
+    var payload = this.userService.getUserPayload();
+    if (event.target.files.length > 0) {
+      const file = event.target.files[0];
+      this.uploadForm.patchValue({
+        file: file,
+        userid: payload._id
+      });
+    }
+  }
+
+  uploadExcel(){
+    const formData = new FormData();
+    formData.append('file', this.uploadForm.get('file').value);
+    formData.append('userid', this.uploadForm.get('userid').value);
+    this.duesService.postDuesExcel(formData).subscribe(
+    res => {
+      this.serverServerMessages = res as any
+      this.toastr.success(this.serverServerMessages.message, 'File Uploaded');
+      this.refreshDuesList();
+      this.modalService.dismissAll();
+    },
+    err => {
+      console.log(err)
+      if (err.status === 400 || 500) {
+        this.toastr.warning( this.serverErrorMessages = err.error, 'Excel Upload Failed')
+      }
+      else
+        this.toastr.error( this.serverErrorMessages = 'Something went wrong. Please contact admin.', 'Error 422')
+    })
+  }
+
+  downloadExcel(){
+    var payLoad = this.userService.getUserPayload();
+    this.duesService.getDuesExcel(payLoad.classname).subscribe(
+      (res: any) => {
+        this.toastr.success(res.message, 'File Downloaded');
+        FileSaver.saveAs(res.path, `Finances.xlsx`)
+      },
+      err => {
+        console.log(err)
+        if (err.status === 400 || 500) {
+          this.toastr.warning( this.serverErrorMessages = err.error, 'Excel Download Failed')
+        }
+        else
+          this.toastr.error( this.serverErrorMessages = 'Something went wrong. Please contact admin.', 'Error 422')
+      })  
   }
 
 }

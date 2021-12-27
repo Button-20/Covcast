@@ -16,6 +16,10 @@ export class PaymentService {
     return this.http.post(environment.apiBaseUrl+'/user/payment/register', payment)
   }
 
+  getPaymentExcel(id: string, classname: string){
+    return this.http.get(environment.apiBaseUrl + `/user/payment/downloadExcel/${classname}/${id}`);
+  }
+
   getPaymentsList(){
     return this.http.get(environment.apiBaseUrl+'/user/payment');
   }

@@ -10,7 +10,7 @@ const ctrlTask = require('../controllers/task.controller');
 const ctrlPlan = require('../controllers/plan.controller');
 const ctrlSubscription = require('../controllers/subscription.controller');
 const ctrlPayment = require('../controllers/payment.controller');
-
+const uploadFile = require('../controllers/member.controller');
 
 // Users
 router.post('/register', ctrlUser.register);
@@ -23,11 +23,6 @@ router.put('/users/:id', jwtHelper.verifyJwtToken, ctrlUser.put);
 router.delete('/users/:id', jwtHelper.verifyJwtToken, ctrlUser.delete);
 
 // Member => localhost:3000/api/.......
-router.post('/user/members/register', jwtHelper.verifyJwtToken, ctrlMember.register);
-router.post('/user/members/sms', ctrlMember.sendSms);
-router.post('/user/uploadExcel/:type', jwtHelper.verifyJwtToken, ctrlMember.create);
-// router.post('/user/members/insertExcel/:type', ctrlMember.uploadExcel);
-router.get('/user/members', jwtHelper.verifyJwtToken, ctrlMember.get);
 
 
 // Admin
@@ -36,7 +31,12 @@ router.get('/user/malememberscountall', jwtHelper.verifyJwtToken, ctrlMember.get
 router.get('/user/femalememberscountall', jwtHelper.verifyJwtToken, ctrlMember.getAllFemaleCount);
 
 
-// User
+// Members
+router.post('/user/members/register', jwtHelper.verifyJwtToken, ctrlMember.register);
+router.post('/user/members/sms', ctrlMember.sendSms);
+router.post('/user/members/uploadExcel', jwtHelper.verifyJwtToken, ctrlMember.uploadExcel);
+router.get('/user/members/downloadExcel/:classname', jwtHelper.verifyJwtToken, ctrlMember.downloadExcel);
+router.get('/user/members', jwtHelper.verifyJwtToken, ctrlMember.get);
 router.get('/user/memberscount/:classname', jwtHelper.verifyJwtToken, ctrlMember.getCount);
 router.get('/user/malemembers/:classname', jwtHelper.verifyJwtToken, ctrlMember.getMale);
 router.get('/user/femalemembers/:classname', jwtHelper.verifyJwtToken, ctrlMember.getFemale);
@@ -49,6 +49,8 @@ router.delete('/user/members/:id', jwtHelper.verifyJwtToken, ctrlMember.delete);
 
 // Dues => localhost:3000/api/.......
 router.post('/user/dues/register', jwtHelper.verifyJwtToken, ctrlDues.register);
+router.post('/user/dues/uploadExcel', jwtHelper.verifyJwtToken, ctrlDues.uploadExcel);
+router.get('/user/dues/downloadExcel/:classname', jwtHelper.verifyJwtToken, ctrlDues.downloadExcel);
 router.get('/user/dues', jwtHelper.verifyJwtToken, ctrlDues.get);
 router.get('/user/dues/:id', jwtHelper.verifyJwtToken, ctrlDues.getID);
 router.get('/user/duescount', jwtHelper.verifyJwtToken, ctrlDues.getCount);
@@ -61,6 +63,8 @@ router.delete('/user/dues/:id', jwtHelper.verifyJwtToken, ctrlDues.delete);
 
 // Attendance => localhost:3000/api/.......
 router.post('/user/attendance/register', jwtHelper.verifyJwtToken, ctrlAttendance.register);
+router.post('/user/attendance/uploadExcel', jwtHelper.verifyJwtToken, ctrlAttendance.uploadExcel);
+router.get('/user/attendance/downloadExcel/:classname', jwtHelper.verifyJwtToken, ctrlAttendance.downloadExcel);
 router.get('/user/attendance', jwtHelper.verifyJwtToken, ctrlAttendance.get);
 router.get('/user/attendance/:id', jwtHelper.verifyJwtToken, ctrlAttendance.getID);
 router.get('/user/attendancecount/:classname', jwtHelper.verifyJwtToken, ctrlAttendance.getCount);
@@ -72,6 +76,7 @@ router.delete('/user/attendance/:id', jwtHelper.verifyJwtToken, ctrlAttendance.d
 
 // Payments => localhost:3000/api/.......
 router.post('/user/payment/register', jwtHelper.verifyJwtToken, ctrlPayment.register);
+router.get('/user/payment/downloadExcel/:classname/:userid', ctrlPayment.downloadExcel);
 router.get('/user/payment', jwtHelper.verifyJwtToken, ctrlPayment.get);
 router.get('/user/payment/allpaymentcount', jwtHelper.verifyJwtToken, ctrlPayment.getAllCount);
 router.get('/user/payment/:startdate/:enddate', jwtHelper.verifyJwtToken, ctrlPayment.getAllPaymentDateFilter);
@@ -101,6 +106,7 @@ router.delete('/plan/:id', jwtHelper.verifyJwtToken, ctrlPlan.delete);
 
 // Subscription => localhost:3000/api/.......
 router.post('/subscription/register', jwtHelper.verifyJwtToken, ctrlSubscription.register);
+router.get('/subscriptions/downloadExcel', jwtHelper.verifyJwtToken, ctrlSubscription.downloadExcel);
 router.get('/subscriptions', jwtHelper.verifyJwtToken, ctrlSubscription.get);
 router.get('/subscription/:id', jwtHelper.verifyJwtToken, ctrlSubscription.getID);
 router.get('/allsubscriptioncount', jwtHelper.verifyJwtToken, ctrlSubscription.getCount);

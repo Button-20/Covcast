@@ -76,8 +76,8 @@ userSchema.methods.verifyPassword = function (password) {
     return bcrypt.compareSync(password, this.password);
 };
 
-userSchema.methods.generateJwt = function () {
-    return jwt.sign({ _id: this._id, role: this.role, classname: this.classname, pic: this.pic, loginPermission: this.loginPermission},
+userSchema.methods.generateJwt = function (plan_id) {
+    return jwt.sign({ _id: this._id, role: this.role, classname: this.classname, pic: this.pic, loginPermission: this.loginPermission, subscription: plan_id},
         process.env.JWT_SECRET,
     {
         expiresIn: process.env.JWT_EXP

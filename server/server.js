@@ -7,10 +7,29 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const passport = require('passport');
 const schedule = require('node-schedule');
+const multer = require('multer');
+const excelFilter = (req, file, cb) => {
+    if (
+      file.mimetype.includes("excel") ||
+      file.mimetype.includes("spreadsheetml")
+    ) {
+      cb(null, true);
+    } else {
+      cb("Please upload only excel file.", false);
+    }
+};
+const fileStorageEngine = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "./excel-documents")
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '__' + file.originalname)
+    }
+})
+var uploadFile = multer({ storage: fileStorageEngine, fileFilter: excelFilter });
 const rtsIndex = require('./routes/index.router');
 const User = require('./models/user.model');
 const Subscription = require('./models/subscription.model');
-const Task = require('./models/task.model');
 
 
 var app = express();
@@ -18,6 +37,7 @@ var allowedDomains = ['http://localhost:4200', 'https://alias-egroups.web.app'];
 
 // middleware
 app.use(bodyParser.json());
+app.use(uploadFile.single('file'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors({
     origin: function (origin, callback) {
@@ -70,7 +90,7 @@ app.listen(process.env.PORT, () => {
             });
             console.log('User can login but Subscription Period is past')
 
-          } else if(user.loginPermission === false && new Date(user.subscription.subscription_end) > Date.now()){
+          } else if (user.loginPermission === false && new Date(user.subscription.subscription_end) > Date.now()){
 
             var data = {
               loginPermission: true,
@@ -81,7 +101,9 @@ app.listen(process.env.PORT, () => {
             });
             console.log('User cannot login but Subscription Period is yet to come')
 
-          }else
+          } else if (user.subscription === null || user.subscription === ''){
+            console.log('User does have subscription: ' + user)
+          } else
             console.log(!err ? 'User Checks Done' : 'Error in retrieving subscriptions for a User:' + JSON.stringify(err, undefined, 2))
         })
       }

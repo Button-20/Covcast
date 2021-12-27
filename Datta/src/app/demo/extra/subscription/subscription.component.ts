@@ -10,6 +10,8 @@ import { Subscription } from 'src/app/theme/shared/subscription.model';
 import { SubscriptionService } from 'src/app/theme/shared/subscription.service';
 import { User } from 'src/app/theme/shared/user.model';
 import { UserService } from 'src/app/theme/shared/user.service';
+import * as FileSaver from 'file-saver';
+
 
 @Component({
   selector: 'app-subscription',
@@ -113,16 +115,17 @@ export class SubscriptionComponent implements OnInit {
     })
   }
 
-  onEdit(content, subscription: Subscription) {
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'})
-    this.subscriptionForm.setValue({
-      _id: subscription._id,
-      userid: subscription.userid,
-      plan_id: subscription.plan_id,
-      subscription_start: this.formattedDate(subscription.subscription_start),
-      subscription_end: this.formattedDate(subscription.subscription_end)
-    })
-  }
+  // onEdit(content, subscription: Subscription) {
+  //   this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'})
+  //   console.log(subscription);
+  //   this.subscriptionForm.setValue({
+  //     _id: subscription._id,
+  //     userid: subscription.userid,
+  //     plan_id: subscription.plan_id,
+  //     subscription_start: this.formattedDate(subscription.subscription_start),
+  //     subscription_end: this.formattedDate(subscription.subscription_end)
+  //   })
+  // }
 
   formattedDate(date) {
     return moment(date).format("YYYY-MM-DD")
@@ -138,6 +141,22 @@ export class SubscriptionComponent implements OnInit {
       }
       
       this.refreshSubscriptionList();
+  }
+
+  downloadExcel(){
+    this.subscriptionService.getSubscriptionExcel().subscribe(
+      (res: any) => {
+        this.toastr.success(res.message, 'File Downloaded');
+        FileSaver.saveAs(res.path, `Subscriptions.xlsx`)
+      },
+      err => {
+        console.log(err)
+        if (err.status === 400 || 500) {
+          this.toastr.warning( this.serverErrorMessages = err.error, 'Excel Download Failed')
+        }
+        else
+          this.toastr.error( this.serverErrorMessages = 'Something went wrong. Please contact admin.', 'Error 422')
+      })  
   }
 
 }

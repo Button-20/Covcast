@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 var  Dues = require('../models/dues.model');
-var ObjectId = require('mongoose').Types.ObjectId;
+var ObjectId = mongoose.Types.ObjectId;
+const path = require('path'); 
+const readXlsxFile = require("read-excel-file/node");
+const exceljs = require("exceljs");
 
 // Registering Member Dues
 module.exports.register = (req, res, next) => {
@@ -129,4 +132,168 @@ module.exports.delete = (req, res) => {
             if (!err) { res.send(doc); }
             else { console.log('Error in Retrieving Dues :' + JSON.stringify(err, undefined, 2))};
         });
+}
+
+module.exports.uploadExcel = async (req, res) => {
+    try {
+        // console.log(req)
+        if (req.file == undefined) {
+          return res.status(400).send("Please upload an excel file!");
+        }
+    
+        let route = path.join('./excel-documents/' + req.file.filename);
+    
+        readXlsxFile(route).then((rows) => {
+          // skip header
+          rows.shift();
+    
+          let dues = [];
+    
+          rows.forEach((row) => {
+            let due = {
+                classname: row[0],
+                userid: req.body.userid,
+                membername: row[1],
+                amount: row[2],
+                dateofpayment: Date(row[3]),
+                description: row[4]
+            };
+            dues.push(due);
+            console.log(dues);
+
+            Dues.insertMany(dues, (err, doc) => {
+                if (!err) { res.status(200).send({
+                    message: "Uploaded the file successfully: " + req.file.originalname,
+                    result: doc
+                  }); }
+                else { res.status(500).send({ message: 'Error in Dues Insert :' + JSON.stringify(err, undefined, 2)}), console.log('Error in Members Insert :' + JSON.stringify(err, undefined, 2))}; 
+            });
+    
+          });
+        });
+        
+    }catch(error){
+        console.log(error);
+        res.status(500).send({
+        message: "Could not upload the file: " + req.file.originalname,
+        });
+    }
+}
+
+module.exports.downloadExcel = async (req, res) => {
+    if (req.params.classname !== 'Admin') {
+        console.log(req.params.classname)
+        Dues.find({classname: req.params.classname}, async (err, doc) => {
+            if (!err) {
+                let dues = [];
+    
+                doc.forEach((due)  => {
+                    dues.push({
+                        classname: due.classname,
+                        membername: due.membername,
+                        amount: due.amount,
+                        dateofpayment: due.dateofpayment,
+                        description: due.description
+                    }) 
+                })
+    
+                let workbook = new exceljs.Workbook();
+                let worksheet = workbook.addWorksheet('Finances');
+        
+                worksheet.columns = [
+                    { header: "Class Name", key: "classname", width: 15 },
+                    { header: "Member's Name", key: "membername", width: 25 },
+                    { header: "Amount", key: "amount", width: 10 },
+                    { header: "Date Of Payment", key: "dateofpayment", width: 15 },
+                    { header: "Description", key: "description", width: 20 },
+                  ];
+    
+                // Add Array Rows
+                worksheet.addRows(members);
+                
+                // Making first line in excel bold
+                worksheet.getRow(1).eachCell((cell) => {
+                    cell.font = { bold: true, color: { argb: 'FFFF0000' } };
+                    cell.fill = { type: 'pattern', pattern:'solid', fgColor:{ argb:'FFFF33' } }
+                });
+                
+                const route = path.join('./exports/dues');  // Path to download excel
+                    
+                try {
+                    const data = await workbook.xlsx.writeFile(`${route}/${Date.now()}__Finances__Export.xlsx`)
+                     .then(() => {
+                       res.send({
+                         status: "Success",
+                         message: "File successfully downloaded",
+                         path: `${route}/${Date.now()}__Finances__Export.xlsx`,
+                        });
+                     });
+                } catch (err) {
+                      res.status(500).send({
+                      status: "error",
+                      message: "Something went wrong",
+                    });
+                }
+            }
+            else { res.status(500).send({ message: 'Error in Retrieving Dues: ' + JSON.stringify(err, undefined, 2)}), console.log('Error in Retrieving Member: ' + JSON.stringify(err, undefined, 2))};
+        });    
+
+    }else{
+        console.log('Admin Download')
+        Dues.find({}, async (err, doc) => {
+            if (!err) {
+                let dues = [];
+    
+                doc.forEach((due)  => {
+                    dues.push({
+                        classname: due.classname,
+                        membername: due.membername,
+                        amount: due.amount,
+                        dateofpayment: due.dateofpayment,
+                        description: due.description
+                    }) 
+                })
+    
+                let workbook = new exceljs.Workbook();
+                let worksheet = workbook.addWorksheet('Finances');
+        
+                worksheet.columns = [
+                    { header: "Class Name", key: "classname", width: 15 },
+                    { header: "Member's Name", key: "membername", width: 25 },
+                    { header: "Amount", key: "amount", width: 10 },
+                    { header: "Date Of Payment", key: "dateofpayment", width: 15 },
+                    { header: "Description", key: "description", width: 20 },
+                  ];
+    
+                // Add Array Rows
+                worksheet.addRows(dues);
+                
+                // Making first line in excel bold
+                worksheet.getRow(1).eachCell((cell) => {
+                    cell.font = { bold: true, color: { argb: 'FFFF0000' } };
+                    cell.fill = { type: 'pattern', pattern:'solid', fgColor:{ argb:'FFFF33' } }
+                });
+                
+                const route = path.join('./exports/dues');  // Path to download excel
+                    
+                try {
+                    const data = await workbook.xlsx.writeFile(`${route}/${Date.now()}__Finances__Export.xlsx`)
+                     .then(() => {
+                       res.send({
+                         status: "Success",
+                         message: "File successfully downloaded",
+                         path: `${route}/${Date.now()}__Finances__Export.xlsx`,
+                        });
+                     });
+                } catch (err) {
+                      res.status(500).send({
+                      status: "error",
+                      message: "Something went wrong",
+                    });
+                }
+            }
+            else { res.status(500).send({ message: 'Error in Retrieving Dues: ' + JSON.stringify(err, undefined, 2)}), console.log('Error in Retrieving Member: ' + JSON.stringify(err, undefined, 2))};
+        });    
+    }
+
 }

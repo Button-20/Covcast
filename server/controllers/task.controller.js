@@ -25,11 +25,14 @@ module.exports.register = (req, res, next) => {
                     status: 'Overdue'
                   }
                   schedule.scheduleJob(doc.enddate, function(){
+                    if (doc.status !== "Completed") {
                     Task.findByIdAndUpdate(doc._id, {$set: data}, {new: true}, (err, doc) => {
                         if (!err) { console.log(doc) }
                         else { console.log('Error in Task Update :' + JSON.stringify(err, undefined, 2))}; 
-                      });
-                      console.log('Task is Overdue')          
+                        });
+                        console.log('Task is Overdue')          
+                    }else
+                        return null;
                   })
                 }
                 else
@@ -106,8 +109,6 @@ module.exports.put = (req, res) => {
             startdate: req.body.startdate,
             enddate: req.body.enddate
         };
-        console.log('Passed Update')
-
         Task.findByIdAndUpdate(req.params.id, {$set: task}, {new: true}, (err, doc) => {
             if (!err) {
                 res.send(doc)
@@ -115,14 +116,17 @@ module.exports.put = (req, res) => {
                     console.log('Passed cron')
                     var data = {
                         status: 'Overdue'
-                      }
-                    Task.findByIdAndUpdate(doc._id, {$set: data}, {new: true}, (err, doc) => {
-                        if (!err) { console.log(doc) }
-                        else { console.log('Error in Task Update :' + JSON.stringify(err, undefined, 2))}; 
-                        });
-                        console.log('Task is Overdue')
-                        schedule.cancelJob('Check End Date');
-                    })
+                      }    
+                    if (doc.status !== "Completed") {
+                        Task.findByIdAndUpdate(doc._id, {$set: data}, {new: true}, (err, doc) => {
+                            if (!err) { console.log(doc) }
+                            else { console.log('Error in Task Update :' + JSON.stringify(err, undefined, 2))}; 
+                            });
+                            console.log('Task is Overdue')
+                            schedule.cancelJob('Check End Date');
+                    }else
+                        return null;
+                })
             }
             else { console.log('Error in Task Update :' + JSON.stringify(err, undefined, 2))}; 
         });

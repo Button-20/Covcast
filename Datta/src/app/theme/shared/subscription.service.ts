@@ -32,6 +32,10 @@ export class SubscriptionService {
     return this.http.get(environment.apiBaseUrl + `/subscription/${startdate}/${enddate}`);
   }
 
+  getSubscriptionExcel(){
+    return this.http.get(environment.apiBaseUrl + '/subscriptions/downloadExcel');
+  }
+
   updateSubscription(subscription: Subscription){
     return this.http.put(environment.apiBaseUrl + `/subscription/${subscription._id}`, subscription);
   }

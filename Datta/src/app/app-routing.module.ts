@@ -4,6 +4,7 @@ import { AdminComponent } from './theme/layout/admin/admin.component';
 import { AuthComponent } from './theme/layout/auth/auth.component';
 import { AuthGuard } from './theme/layout/auth/auth.guard';
 import { RestrictGuard } from './theme/layout/auth/restrict.guard';
+import { SubscriptionGuard } from './theme/layout/auth/subscription.guard';
 
 const routes: Routes = [
   {
@@ -55,7 +56,8 @@ const routes: Routes = [
       },
       {
         path: 'services/bulk-sms',
-        loadChildren: () => import('./demo/extra/bulk-sms/bulk-sms.module').then(m => m.BulksmsModule)
+        loadChildren: () => import('./demo/extra/bulk-sms/bulk-sms.module').then(m => m.BulksmsModule),
+        canActivate:[SubscriptionGuard]
       },
       {
         path: 'services/payment',
@@ -68,8 +70,8 @@ const routes: Routes = [
       },
       {
         path: 'mgt/premium/tasks',
-        loadChildren: () => import('./demo/extra/task/task.module').then(m => m.TaskModule)
-        // canActivate:[RestrictGuard]
+        loadChildren: () => import('./demo/extra/task/task.module').then(m => m.TaskModule),
+        canActivate:[SubscriptionGuard]
       }
     ]
   },

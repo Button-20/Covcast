@@ -22,10 +22,11 @@
       <div class="btn-group mb-4 mr-2" ngbDropdown [placement]="'bottom-left'">
         <button class="btn btn-outline-dark" ngbDropdownToggle type="button">Export</button>
         <div ngbDropdownMenu>
-          <a class="dropdown-item" href="javascript:">Excel</a>
-          <a class="dropdown-item" href="javascript:">Pdf</a>
+          <a class="dropdown-item" href="javascript:" (click)="openUpload(uploadcontent)">Upload Excel</a>
+          <a class="dropdown-item" href="javascript:" (click)="downloadExcel()">Export to Excel</a>
+          <a class="dropdown-item" href="javascript:">Export to Pdf</a>
         </div>
-      </div>  
+    </div>  
       <button class="btn btn-danger mb-4" type="button" (click)="open(content)">Add Attendance</button>
     </div>
   </div>
@@ -172,6 +173,38 @@
     
                 <div class="modal-footer">
                 <button type="submit" class="btn btn-info">Save</button>
+                <button type="button" class="btn btn-outline-dark" (click)="modal.close('Cancel click')">Cancel</button>
+              </div>
+            </form>
+          </div>
+      </div>
+    </ng-template>
+
+    <ng-template #uploadcontent let-modal>
+      <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Attendance Upload Form</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form [formGroup]="uploadForm" (ngSubmit)="uploadExcel()" enctype="multipart/form-data">
+              
+              <div class="form-group">
+                <label for="file">File</label>
+                <div class="input-group">
+                  <input id="source" (change)="onFileChange($event)" class="form-control" placeholder="Upload Excel File" name="file" type="file" formControlName="source" [ngClass]="(uploadForm.get('source').touched || uploadForm.get('source').dirty) && uploadForm.get('source').errors ? 'is-invalid' : ''" required>
+                  <div *ngIf="uploadForm.get('source').invalid && (uploadForm.get('source').dirty || uploadForm.get('source').touched)" class="invalid-feedback">
+                      <div *ngIf="uploadForm.get('source').errors.required">
+                      This field is required
+                      </div>
+                  </div>
+                </div>
+              </div>
+                      
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-info">Upload</button>
                 <button type="button" class="btn btn-outline-dark" (click)="modal.close('Cancel click')">Cancel</button>
               </div>
             </form>

@@ -1,9 +1,12 @@
 var Member = require('../models/member.model');
+var SmsLog = require('../models/sms-log.model');
 var ObjectId = require('mongoose').Types.ObjectId;
-var xlsxtojson = require('xlsx-to-json');
 var unirest = require('unirest');
+const path = require('path'); 
 const smsApiUrl = 'https://sms.nalosolutions.com/smsbackend/clientapi/Resl_Nalo';
-global.__basedir = __dirname;
+const readXlsxFile = require("read-excel-file/node");
+const exceljs = require("exceljs");
+
 
 // Registering a Member
 module.exports.register = (req, res, next) => {
@@ -26,7 +29,7 @@ module.exports.register = (req, res, next) => {
                     res.send(doc);
                 else {
                     if (err.code == 11000)
-                        res.status(422).send(['Duplicate Member found.']);
+                        res.status(422).send(['Duplicate Phone Number found.']);
                     else
                         return next(err);
                 }
@@ -36,54 +39,6 @@ module.exports.register = (req, res, next) => {
 }
 
 
-// Insert Many Members From Excel To MongoDB
-module.exports.create = async(req, res) => {
-    console.info('started');
-    if (!req.files || Object.keys(req.files).length === 0) {
-        return res.status(400).send({ message: 'No files were uploaded.' });
-    }
-
-    if (!req.params.type) {
-        return res.status(400).send({ message: 'Image Type must be Provided.' });
-    }
-    console.log(req.files.file);
-    // The name of the input field (i.e. "gallery") is used to retrieve the uploaded file
-    const file = req.files.file;
-    const fname = new Date().getTime() + file.name.replace(/ /g, "_");
-    const name = appRoot + '/../public/' + req.params.type + '/' + fname;
-    console.log(name)
-        // Use the mv() method to place the file somewhere on your server
-    file.mv(name, function(err) {
-        if (err) {
-            console.log(err);
-            return res.status(500).send(err);
-        }
-        console.log(result);
-        // Create a Gallery
-        var mem = new Member({
-            classname: req.body.classname,
-            firstname: req.body.firstname,
-            lastname: req.body.lastname,
-            othername: req.body.othername,
-            gender: req.body.gender,
-            email: req.body.email,
-            digitaladdress: req.body.digitaladdress,
-            phonenumber: req.body.phonenumber,
-            dateofbirth: req.body.dateofbirth
-            });        
-
-        // Save a Gallery in the MongoDB
-        mem.save()
-            .then(data => {
-                res.send(data);
-            }).catch(err => {
-                res.status(500).send({
-                    message: err.message
-                });
-            });
-        res.send('File uploaded!');
-    });
-};
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Getting all members array
@@ -140,10 +95,10 @@ module.exports.getID = (req, res) => {
 
 // Finding a member with Classname
 module.exports.getClassname = (req, res) => {
-        Member.find({classname: req.params.classname}, (err, doc) => {
-            if (!err) { res.send(doc); }
-            else { console.log('Error in Retrieving Member :' + JSON.stringify(err, undefined, 2))};
-        });
+    Member.find({classname: req.params.classname}, (err, doc) => {
+        if (!err) { res.send(doc); }
+        else { console.log('Error in Retrieving Member :' + JSON.stringify(err, undefined, 2))};
+    });
 }
 
 // Finding a member with Male Gender
@@ -214,12 +169,220 @@ async function sendSms (req, res, next){
         })
         .end(
         async(resp) => {
-            if (!resp.error)
-               return res.status(200).json('Sms Sent Successfully');
-            else
-               return res.status(400).json(resp.error);
-
+            if (!resp.error){
+                res.status(200).json('Sms Sent Successfully');
+                var smslog = new SmsLog({
+                    userid: req.body.userid,
+                    message: req.body.message,
+                    status: 'Success',
+                    source: req.body.source,
+                    destination: req.body.destination,
+                })
+                smslog.save((err, doc) => {
+                    if (!err)
+                        return console.log('Sms-Log saved: ' + doc)
+                    else 
+                        return next(err);
+                })
+            }
+            else{
+                res.status(400).json(resp.error);
+                var smslog = new SmsLog({
+                    userid: req.body.userid,
+                    message: req.body.message,
+                    status: 'Failed: ' + resp.error,
+                    source: req.body.source,
+                    destination: req.body.destination,
+                })
+                smslog.save((err, doc) => {
+                    if (!err)
+                        return console.log('Sms-Log saved: ' + doc)
+                    else 
+                        return next(err);
+                })
+            }
         })
 }
-
 module.exports.sendSms = sendSms;
+
+module.exports.uploadExcel = async (req, res) => {
+    try {
+        if (req.file == undefined) {
+          return res.status(400).send("Please upload an excel file!");
+        }
+    
+        let route = path.join('./excel-documents/' + req.file.filename);
+        console.log(route)
+        readXlsxFile(route).then((rows) => {
+          // skip header
+          rows.shift();
+    
+          let members = [];
+    
+          rows.forEach((row) => {
+            let member = {
+              classname: row[0],
+              firstname: row[1],
+              lastname: row[2],
+              othername: row[3],
+              gender: row[4],
+              email: row[5],
+              digitaladdress: row[6],
+              phonenumber: row[7],
+              dateofbirth: Date(row[8]),
+            };
+            members.push(member);
+            console.log(members);
+
+            Member.insertMany(members, (err, doc) => {
+                if (!err) { res.status(200).send({
+                    message: "Uploaded the file successfully: " + req.file.originalname,
+                    result: doc
+                  }); }
+                else { res.status(500).send({ message: 'Error in Members Insert :' + JSON.stringify(err, undefined, 2)}), console.log('Error in Members Insert :' + JSON.stringify(err, undefined, 2))}; 
+            });
+    
+          });
+        });
+        
+    }catch(error){
+        console.log(error);
+        res.status(500).send({
+        message: "Could not upload the file: " + req.file.originalname,
+        });
+    }
+}
+
+module.exports.downloadExcel = async (req, res) => {
+    if (req.params.classname !== 'Admin') {
+        console.log(req.params.classname)
+        Member.find({classname: req.params.classname}, async (err, doc) => {
+            if (!err) {
+                let members = [];
+    
+                doc.forEach((member)  => {
+                    members.push({
+                        classname: member.classname,
+                        firstname: member.firstname,
+                        lastname: member.lastname,
+                        othername: member.othername,
+                        gender: member.gender,
+                        email: member.email,
+                        digitaladdress: member.digitaladdress,
+                        phonenumber: member.phonenumber,
+                        dateofbirth: member.dateofbirth,      
+                    }) 
+                })
+    
+                let workbook = new exceljs.Workbook();
+                let worksheet = workbook.addWorksheet('Members');
+        
+                worksheet.columns = [
+                    { header: "Class Name", key: "classname", width: 15 },
+                    { header: "First Name", key: "firstname", width: 20 },
+                    { header: "Last Name", key: "lastname", width: 20 },
+                    { header: "Other Name", key: "othername", width: 20 },
+                    { header: "Gender", key: "gender", width: 10 },
+                    { header: "Email", key: "email", width: 28 },
+                    { header: "Digital Address", key: "digitaladdress", width: 20 },
+                    { header: "Phone Number", key: "phonenumber", width: 20 },
+                    { header: "Date Of Birth", key: "dateofbirth", width: 20 },
+                  ];
+    
+                // Add Array Rows
+                worksheet.addRows(members);
+                
+                // Making first line in excel bold
+                worksheet.getRow(1).eachCell((cell) => {
+                    cell.font = { bold: true, color: { argb: 'FFFF0000' } };
+                    cell.fill = { type: 'pattern', pattern:'solid', fgColor:{ argb:'FFFF33' } }
+                });
+                
+                const route = path.join('./exports');  // Path to download excel
+                    
+                try {
+                    const data = await workbook.xlsx.writeFile(`${route}/${Date.now()}__Members__Export.xlsx`)
+                     .then(() => {
+                       res.send({
+                         status: "Success",
+                         message: "File successfully downloaded",
+                         path: `${route}/${Date.now()}__Members__Export.xlsx`,
+                        });
+                     });
+                } catch (err) {
+                      res.status(500).send({
+                      status: "error",
+                      message: "Something went wrong",
+                    });
+                }
+            }
+            else { res.status(500).send({ message: 'Error in Retrieving Member: ' + JSON.stringify(err, undefined, 2)}), console.log('Error in Retrieving Member: ' + JSON.stringify(err, undefined, 2))};
+        });    
+
+    }else{
+        console.log('Admin Download')
+        Member.find({}, async (err, doc) => {
+            if (!err) {
+                let members = [];
+    
+                doc.forEach((member)  => {
+                    members.push({
+                        classname: member.classname,
+                        firstname: member.firstname,
+                        lastname: member.lastname,
+                        othername: member.othername,
+                        gender: member.gender,
+                        email: member.email,
+                        digitaladdress: member.digitaladdress,
+                        phonenumber: member.phonenumber,
+                        dateofbirth: member.dateofbirth,      
+                    }) 
+                })
+    
+                let workbook = new exceljs.Workbook();
+                let worksheet = workbook.addWorksheet('Members');
+        
+                worksheet.columns = [
+                    { header: "Class Name", key: "classname", width: 15 },
+                    { header: "First Name", key: "firstname", width: 20 },
+                    { header: "Last Name", key: "lastname", width: 20 },
+                    { header: "Other Name", key: "othername", width: 20 },
+                    { header: "Gender", key: "gender", width: 10 },
+                    { header: "Email", key: "email", width: 28 },
+                    { header: "Digital Address", key: "digitaladdress", width: 20 },
+                    { header: "Phone Number", key: "phonenumber", width: 20 },
+                    { header: "Date Of Birth", key: "dateofbirth", width: 20 },
+                  ];
+    
+                // Add Array Rows
+                worksheet.addRows(members);
+                
+                // Making first line in excel bold
+                worksheet.getRow(1).eachCell((cell) => {
+                    cell.font = { bold: true, color: { argb: 'FFFF0000' } };
+                    cell.fill = { type: 'pattern', pattern:'solid', fgColor:{ argb:'FFFF33' } }
+                });
+                
+                const route = path.join('./exports');  // Path to download excel
+                    
+                try {
+                    const data = await workbook.xlsx.writeFile(`${route}/${Date.now()}__Members__Export.xlsx`)
+                     .then(() => {
+                       res.send({
+                         status: "Success",
+                         message: "File successfully downloaded",
+                         path: `${route}/${Date.now()}__Members__Export.xlsx`,
+                        });
+                     });
+                } catch (err) {
+                      res.status(500).send({
+                      status: "error",
+                      message: "Something went wrong",
+                    });
+                }
+            }
+            else { res.status(500).send({ message: 'Error in Retrieving Member: ' + JSON.stringify(err, undefined, 2)}), console.log('Error in Retrieving Member: ' + JSON.stringify(err, undefined, 2))};
+        });    
+    }
+
+}

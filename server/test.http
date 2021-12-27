@@ -1,7 +1,7 @@
 @API_URL = http://localhost:8000/api
 # @API_URL = https://evening-island-44720.herokuapp.com
 @id = 61a2a0b613273118c43432db
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWJkY2MzNzQzMGM3NDM4NjQ4OThjZjYiLCJyb2xlIjoiQWRtaW4iLCJjbGFzc25hbWUiOiJBZG1pbiIsInBpYyI6ImFzc2V0cy9pbWcvZGVmYXVsdC1hdmF0YXIucG5nIiwibG9naW5QZXJtaXNzaW9uIjp0cnVlLCJpYXQiOjE2NDAzNTQxNjQsImV4cCI6MTY0MDM1Nzc2NH0.Ul8ncwUojJUHPzxlxyMk88ec8azRm3qs6uEn4k1VAT8
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWJkY2MzNzQzMGM3NDM4NjQ4OThjZjYiLCJyb2xlIjoiQWRtaW4iLCJjbGFzc25hbWUiOiJBZG1pbiIsInBpYyI6ImFzc2V0cy9pbWcvZGVmYXVsdC1hdmF0YXIucG5nIiwibG9naW5QZXJtaXNzaW9uIjp0cnVlLCJpYXQiOjE2NDAzNjQ2MDgsImV4cCI6MTY0MDM2ODIwOH0.F296OLarX864mcoyPhB7pEiQgBhJ5OMa-C9hw_FepGs
 @classname = Hawkers
 
 ##################################################################
@@ -138,6 +138,6 @@ Authorization: Bearer {{token}}
   "classname": "Admin",
   "name": "Test Tasks 2",
   "description": "This task has to change it's state when it's 2:00",
-  "status": "In-Progress",
-  "enddate": "2021-12-24T14:00:00.000Z"
+  "status": "Completed",
+  "enddate": "2021-12-24T16:53:00.000Z"
 }

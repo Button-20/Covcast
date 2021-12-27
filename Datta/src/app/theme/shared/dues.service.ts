@@ -22,6 +22,14 @@ export class DuesService {
     return this.http.post(environment.apiBaseUrl+'/user/dues/register', dues);
   }
 
+  postDuesExcel(excel){
+    return this.http.post(environment.apiBaseUrl+'/user/dues/uploadExcel', excel);
+  }
+
+  getDuesExcel(classname: string){
+    return this.http.get(environment.apiBaseUrl + `/user/dues/downloadExcel/${classname}`);
+  }
+
   getDuesList(){
     return this.http.get(environment.apiBaseUrl+'/user/dues');
   }

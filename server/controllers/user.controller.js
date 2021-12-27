@@ -1,6 +1,7 @@
 const passport = require('passport');
 var ObjectId = require('mongoose').Types.ObjectId;
 const User = require('../models/user.model');
+const Subscription = require('../models/subscription.model');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const transporter = nodemailer.createTransport({
@@ -44,17 +45,26 @@ module.exports.register = (req, res, next) => {
 
 module.exports.authenticate = (req, res, next) => {
     // call for passport authentication
-    passport.authenticate('local', (err, user, info) => {       
+    passport.authenticate('local', (err, user, info) => {
         // error from passport middleware
         if (err) return res.status(400).json(err);
         // registered user
-        else if (user) return res.status(200).json({ "token": user.generateJwt() });
+        else if (user){
+            try {
+                Subscription.findById(user.subscription, async (err, doc) => {
+                    if (!err) return res.status(200).json({"token": await user.generateJwt(doc.plan_id.name)});
+                    else { console.log('Error in Retrieving Subscription on Token Generation :' + JSON.stringify(err, undefined, 2))};
+                }).populate('plan_id');        
+            } catch (error) {
+                res.status(400).json(error);
+            }
+        }
         // unknown user or wrong password
         else return res.status(404).json(info);
     })(req, res);
 }
 
-// Getting all members array
+// Getting all users array
 module.exports.get = (req, res) => {
     User.find((err, docs) => {
         if (!err) { res.send(docs); }
@@ -62,21 +72,21 @@ module.exports.get = (req, res) => {
     });
 }
 
-// Finding a member with ID
+// Finding a user with ID
 module.exports.getID = (req, res) => {
     if (!ObjectId.isValid(req.params.id))
-        return res.status(400).send(`No member found with given id : ${req.params.id}`);
+        return res.status(400).send(`No user found with given id : ${req.params.id}`);
 
         User.findById(req.params.id, (err, doc) => {
             if (!err) { res.send(doc); }
-            else { console.log('Error in Retrieving Member :' + JSON.stringify(err, undefined, 2))};
-        });
+            else { console.log('Error in Retrieving User :' + JSON.stringify(err, undefined, 2))};
+        }).populate({ path: 'subscription', populate: { path: 'plan_id', model: 'Plan'}});
 }
 
-// Updating a member with ID
+// Updating a user with ID
 module.exports.put = (req, res) => {
     if (!ObjectId.isValid(req.params.id))
-        return res.status(400).send(`No member found with given id : ${req.params.id}`);
+        return res.status(400).send(`No User found with given id : ${req.params.id}`);
         
         var user = {
             classname: req.body.classname,

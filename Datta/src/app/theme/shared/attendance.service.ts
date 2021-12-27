@@ -21,6 +21,14 @@ export class AttendanceService {
     return this.http.post(environment.apiBaseUrl+'/user/attendance/register', attendance);
   }
 
+  postAttendanceExcel(excel){
+    return this.http.post(environment.apiBaseUrl+'/user/attendance/uploadExcel', excel);
+  }
+
+  getAttendanceExcel(classname: string){
+    return this.http.get(environment.apiBaseUrl + `/user/attendance/downloadExcel/${classname}`);
+  }
+
   getAttendanceList(){
     return this.http.get(environment.apiBaseUrl + '/user/attendance');
   }

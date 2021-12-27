@@ -12,6 +12,11 @@ import '../../../../assets/charts/amchart/ammap.min.js';
 import '../../../../assets/charts/amchart/usaLow.js';
 import '../../../../assets/charts/amchart/radar.js';
 import '../../../../assets/charts/amchart/worldLow.js';
+import { UserService } from 'src/app/theme/shared/user.service.js';
+import { MembersService } from 'src/app/theme/shared/members.service.js';
+import { DuesService } from 'src/app/theme/shared/dues.service.js';
+import { AttendanceService } from 'src/app/theme/shared/attendance.service.js';
+import { DuesTotal } from 'src/app/theme/shared/duesTotal.model.js';
 
 @Component({
   selector: 'app-default',
@@ -20,7 +25,7 @@ import '../../../../assets/charts/amchart/worldLow.js';
 })
 export class DefaultComponent implements OnInit {
 
-  constructor() { }
+  constructor(public userService: UserService, public memberService: MembersService, public duesService: DuesService, public attendanceService: AttendanceService) { }
 
   ngOnInit() {
     setTimeout(() => {
@@ -353,4 +358,89 @@ export class DefaultComponent implements OnInit {
     }, 500);
   }
 
+  startProcedures(){
+    var payLoad = this.userService.getUserPayload();
+     if(payLoad && payLoad.classname == 'Admin'){
+       this.refreshAllTotalDues();
+       this.refreshAllMaleCount();
+       this.refreshFemaleList();
+       this.refreshAllMembersCount();
+       this.refreshAllAttendanceCount();
+     }
+     else{
+       this.refreshTotalDues(payLoad.classname);
+       this.refreshMembersCount(payLoad.classname);
+       this.refreshMembersMaleList(payLoad.classname);
+       this.refreshMembersFemaleList(payLoad.classname);  
+       this.refreshAttendanceCount(payLoad.classname);
+     }
+   }
+ 
+ 
+ 
+ 
+ 
+   refreshTotalDues(classname: string){
+     this.duesService.getTotalDues(classname).subscribe((res) => {
+       this.duesService.Total = res as DuesTotal[];
+       console.log(res);
+     })
+   }
+ 
+   refreshMembersMaleList(classname: string){
+     this.memberService.getMembersMaleCount(classname).subscribe((res) => {
+       this.memberService.maleCount = res;
+     })
+   }
+ 
+   refreshMembersFemaleList(classname: string){
+     this.memberService.getMembersFemaleCount(classname).subscribe((res) => {
+       this.memberService.femaleCount = res;
+     })
+   }
+   
+   refreshMembersCount(classname: string){
+     this.memberService.getMembersCount(classname).subscribe((res) => {
+       this.memberService.Count = res;
+     })
+   }
+ 
+   refreshAttendanceCount(classname: string){
+     this.attendanceService.getAttendanceCount(classname).subscribe((res) => {
+       this.attendanceService.count = res;
+     })
+   }
+ 
+   /////////////////////////////////////////------Admin-------/////////////////////////////////////////////////////
+ 
+   refreshAllTotalDues(){
+     this.duesService.getAllTotalDues().subscribe((res) => {
+       this.duesService.Total = res as DuesTotal[];
+     })
+   }
+ 
+   refreshAllMaleCount(){
+     this.memberService.getAllMaleCount().subscribe((res) => {
+       this.memberService.maleCount = res;
+     })
+   }
+ 
+   refreshFemaleList(){
+     this.memberService.getAllFemaleCount().subscribe((res) => {
+       this.memberService.femaleCount = res;
+     })
+   }
+   
+   refreshAllMembersCount(){
+     this.memberService.getAllMembersCount().subscribe((res) => {
+       this.memberService.Count = res;
+     })
+   }
+ 
+   refreshAllAttendanceCount(){
+     this.attendanceService.getAllAttendanceCount().subscribe((res) => {
+       this.attendanceService.count = res;
+     })
+   }
+ 
 }

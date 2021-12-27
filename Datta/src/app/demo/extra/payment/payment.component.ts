@@ -2,12 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
-import { MembersService } from 'src/app/theme/shared/members.service';
 import { Payment } from 'src/app/theme/shared/payment.model';
 import { PaymentService } from 'src/app/theme/shared/payment.service';
 import { Plan } from 'src/app/theme/shared/plan.model';
 import { PlanService } from 'src/app/theme/shared/plan.service';
 import { UserService } from 'src/app/theme/shared/user.service';
+import * as FileSaver from 'file-saver';
+
 
 @Component({
   selector: 'app-payment',
@@ -114,6 +115,23 @@ export class PaymentComponent implements OnInit {
       }
       
       this.refreshPaymentList();
+  }
+
+  downloadExcel(){
+    var payLoad = this.userService.getUserPayload();
+    this.paymentService.getPaymentExcel(payLoad.userid, payLoad.classname).subscribe(
+      (res: any) => {
+        this.toastr.success(res.message, 'File Downloaded');
+        FileSaver.saveAs(res.path, `Payments.xlsx`)
+      },
+      err => {
+        console.log(err)
+        if (err.status === 400 || 500) {
+          this.toastr.warning( this.serverErrorMessages = err.error, 'Excel Download Failed')
+        }
+        else
+          this.toastr.error( this.serverErrorMessages = 'Something went wrong. Please contact admin.', 'Error 422')
+      })  
   }
 
 }

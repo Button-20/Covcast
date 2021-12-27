@@ -1,7 +1,11 @@
 const mongoose = require('mongoose');
 var  Subscription = require('../models/subscription.model');
-var  Plan = require('../models/plan.model');
+var  User = require('../models/user.model');
 var ObjectId = mongoose.Types.ObjectId;
+const path = require('path');
+const exceljs = require("exceljs");
+
+
 
 // Registering Subscription
 module.exports.register = (req, res, next) => {
@@ -24,8 +28,15 @@ module.exports.register = (req, res, next) => {
         res.status(422).send(['Ensure all fields were provided.']);
     }else{
         subscription.save((err, doc) => {
-                if (!err)
-                    res.send(doc);
+                if (!err){
+                    var user = {
+                        subscription: doc._id
+                    }         
+                    User.findByIdAndUpdate(req.body.userid, {$set: user}, {new: true}, (err, doc) => {
+                        if (!err) { res.send(doc); }
+                        else { console.log('Error in User Update :' + JSON.stringify(err, undefined, 2))}; 
+                    });
+                }
                 else 
                     return next(err);
             });
@@ -46,13 +57,13 @@ module.exports.getID = (req, res) => {
     if (!ObjectId.isValid(req.params.id))
         return res.status(400).send(`No Subscription found with given id : ${req.params.id}`);
 
-        Subscription.findById(req.params.id, (err, doc) => {
-            if (!err) { res.send(doc); }
-            else { console.log('Error in Retrieving Subscription :' + JSON.stringify(err, undefined, 2))};
-        });
+    Subscription.findById(req.params.id, (err, doc) => {
+        if (!err) { res.send(doc); }
+        else { console.log('Error in Retrieving Subscription :' + JSON.stringify(err, undefined, 2))};
+    }).populate('plan_id');
 }
 
-// Finding a Plan Count
+// Finding a Subscription Count
 module.exports.getCount = (req, res) => {
     Subscription.countDocuments({}, (err, doc) => {
             if (!err) { res.json(doc); }
@@ -81,7 +92,7 @@ module.exports.put = (req, res) => {
             subscription_start: req.body.subscription_start,
             subscription_end: req.body.subscription_end,
             status: req.body.status
-            };
+        };
         
         Subscription.findByIdAndUpdate(req.params.id, {$set: subscription}, {new: true}, (err, doc) => {
             if (!err) { res.send(doc); }
@@ -100,6 +111,65 @@ module.exports.put = (req, res) => {
 //             else { console.log('Error in Retrieving Subscription :' + JSON.stringify(err, undefined, 2))};
 //         });
 // }
+
+module.exports.downloadExcel = async (req, res) => {
+        console.log('Admin Download')
+        Subscription.find({}, async (err, doc) => {
+            if (!err) {
+                let subscriptions = [];
+    
+                doc.forEach((subscription)  => {
+                    subscriptions.push({
+                        userid: subscription.userid.fullname,
+                        plan_id: subscription.plan_id.name,
+                        subscription_start: subscription.subscription_start,
+                        subscription_end: subscription.subscription_end,
+                        status: subscription.status
+                 
+                    }) 
+                })
+    
+                let workbook = new exceljs.Workbook();
+                let worksheet = workbook.addWorksheet('Subscriptions');
+        
+                worksheet.columns = [
+                    { header: "User Name", key: "userid", width: 20 },
+                    { header: "Plan Name", key: "plan_id", width: 20 },
+                    { header: "Subscription Start", key: "subscription_start", width: 20 },
+                    { header: "Subscription End", key: "subscription_end", width: 20 },
+                    { header: "Status", key: "status", width: 10 }
+                  ];
+    
+                // Add Array Rows
+                worksheet.addRows(subscriptions);
+                
+                // Making first line in excel bold
+                worksheet.getRow(1).eachCell((cell) => {
+                    cell.font = { bold: true, color: { argb: 'FFFF0000' } };
+                    cell.fill = { type: 'pattern', pattern:'solid', fgColor:{ argb:'FFFF33' } }
+                });
+                
+                const route = path.join('./exports/subscriptions');  // Path to download excel
+                    
+                try {
+                    const data = await workbook.xlsx.writeFile(`${route}/${Date.now()}__Subscriptions__Export.xlsx`)
+                     .then(() => {
+                       res.send({
+                         status: "Success",
+                         message: "File successfully downloaded",
+                         path: `${route}/${Date.now()}__Subscriptions__Export.xlsx`,
+                        });
+                     });
+                } catch (err) {
+                      res.status(500).send({
+                      status: "error",
+                      message: "Something went wrong",
+                    });
+                }
+            }
+            else { res.status(500).send({ message: 'Error in Retrieving Subscriptions: ' + JSON.stringify(err, undefined, 2)}), console.log('Error in Retrieving Member: ' + JSON.stringify(err, undefined, 2))};
+        }).populate('plan_id userid');    
+}
 
 function oneMonthFromNow() {
     var d = new Date(); 

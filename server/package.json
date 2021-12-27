@@ -13,18 +13,20 @@
     "body-parser": "^1.19.0",
     "convert-excel-to-json": "^1.7.0",
     "cors": "^2.8.5",
+    "exceljs": "^4.3.0",
     "express": "^4.17.1",
     "express-jwt": "^6.0.0",
     "generate-serial-number": "^0.0.3",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.5",
     "morgan": "^1.10.0",
+    "multer": "^1.4.4",
     "node-schedule": "^2.1.0",
     "nodemailer": "^6.7.2",
     "nodemon": "^2.0.7",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
-    "unirest": "^0.6.0",
-    "xlsx-to-json": "^0.3.0"
+    "read-excel-file": "^5.2.25",
+    "unirest": "^0.6.0"
   }
 }

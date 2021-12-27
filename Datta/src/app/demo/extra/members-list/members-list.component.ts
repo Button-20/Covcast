@@ -6,6 +6,7 @@ import { Members } from '../../../theme/shared/members.model';
 import { MembersService } from 'src/app/theme/shared/members.service';
 import * as moment from 'moment';
 import { UserService } from 'src/app/theme/shared/user.service';
+import * as FileSaver from 'file-saver';
 
 
 @Component({
@@ -31,18 +32,26 @@ export class MembersListComponent implements OnInit {
 
   smsForm = new FormGroup({
     destination: new FormControl('', Validators.required),
-    source: new FormControl('', Validators.required),
+    source: new FormControl(null, Validators.required),
     message: new FormControl('', Validators.required),
   })
 
+  uploadForm = new FormGroup({
+    source: new FormControl('', Validators.required),
+    file: new FormControl(null)
+  })
+
   serverErrorMessages = '';
+  serverServerMessages: any;
   search: string;
+  premiumPlan = false;
 
 
   constructor(private userService: UserService,public memberService: MembersService, private modalService: NgbModal, private toastr: ToastrService) { }
 
   ngOnInit() {
     this.refreshMemberList();
+    this.checkSubscription();
   }
 
   refreshMemberList(){
@@ -144,7 +153,11 @@ export class MembersListComponent implements OnInit {
         this.modalService.dismissAll();
       },
       err => {
-        this.toastr.error( this.serverErrorMessages = 'Something went wrong. Please contact admin.', 'Error 422')
+        if (err.status === 422) {
+          this.toastr.warning( this.serverErrorMessages = err.error.join('<br/>'), 'Sms Post Failed')
+        }
+        else
+          this.toastr.error( this.serverErrorMessages = 'Something went wrong. Please contact admin.', 'Error 422')
       }
     )
     // alert(JSON.stringify(this.smsForm.value));
@@ -160,4 +173,62 @@ export class MembersListComponent implements OnInit {
     this.modalService.open(smscontent, {ariaLabelledBy: 'modal-basic-title'})
   }
   
+  checkSubscription(){
+    var payLoad = this.userService.getUserPayload();
+    if (payLoad.subscription !== 'Premium Plan')
+      this.premiumPlan = false
+    else
+    this.premiumPlan = true
+  }
+
+  openUpload(content) {
+    this.uploadForm.reset();
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'})
+  }
+  
+  onFileChange(event){
+    if (event.target.files.length > 0) {
+      const file = event.target.files[0];
+      this.uploadForm.patchValue({
+        file: file
+      });
+    }
+  }
+
+  uploadExcel(){
+    const formData = new FormData();
+    formData.append('file', this.uploadForm.get('file').value);
+    this.memberService.postMemberExcel(formData).subscribe(
+    res => {
+      this.serverServerMessages = res as any
+      this.toastr.success(this.serverServerMessages.message, 'File Uploaded');
+      this.refreshMemberList();
+      this.modalService.dismissAll();
+    },
+    err => {
+      console.log(err)
+      if (err.status === 400 || 500) {
+        this.toastr.warning( this.serverErrorMessages = err.error, 'Excel Upload Failed')
+      }
+      else
+        this.toastr.error( this.serverErrorMessages = 'Something went wrong. Please contact admin.', 'Error 422')
+    })
+  }
+
+  downloadExcel(){
+    var payLoad = this.userService.getUserPayload();
+    this.memberService.getMemberExcel(payLoad.classname).subscribe(
+      (res: any) => {
+        this.toastr.success(res.message, 'File Uploaded');
+        FileSaver.saveAs(res.path, `Member.xlsx`)
+      },
+      err => {
+        console.log(err)
+        if (err.status === 400 || 500) {
+          this.toastr.warning( this.serverErrorMessages = err.error, 'Excel Download Failed')
+        }
+        else
+          this.toastr.error( this.serverErrorMessages = 'Something went wrong. Please contact admin.', 'Error 422')
+      })  
+  }
 }

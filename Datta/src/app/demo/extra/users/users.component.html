@@ -52,7 +52,7 @@
               </td>
               <td>
                 <a href="javascript:" class="label theme-bg2 text-white f-12" (click)="onEdit(content, user)"><i class="feather icon-edit-2"></i></a>
-                <a href="javascript:" class="label theme-bg text-white f-12" (click)="onDelete(user._id)"><i class="feather icon-trash"></i></a>
+                <a href="javascript:" *ngIf="user.role !== 'Admin'" class="label theme-bg text-white f-12" (click)="onDelete(user._id)"><i class="feather icon-trash"></i></a>
               </td>
             </tr>
             </tbody>

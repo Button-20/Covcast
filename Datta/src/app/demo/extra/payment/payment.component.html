@@ -22,10 +22,10 @@
       <div class="btn-group mb-4 mr-2" ngbDropdown [placement]="'bottom-left'">
         <button class="btn btn-outline-dark" ngbDropdownToggle type="button">Export</button>
         <div ngbDropdownMenu>
-          <a class="dropdown-item" href="javascript:">Excel</a>
-          <a class="dropdown-item" href="javascript:">Pdf</a>
+          <a class="dropdown-item" href="javascript:" (click)="downloadExcel()">Export to Excel</a>
+          <a class="dropdown-item" href="javascript:">Export to Pdf</a>
         </div>
-      </div>  
+    </div>  
       <button class="btn btn-danger mb-4" type="button" (click)="open(content)">Make Payment</button>
     </div>
   </div>

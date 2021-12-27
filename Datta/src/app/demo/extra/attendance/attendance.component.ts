@@ -8,6 +8,7 @@ import { UserService } from 'src/app/theme/shared/user.service';
 import { AttendanceService } from 'src/app/theme/shared/attendance.service';
 import { Attendance } from 'src/app/theme/shared/attendance.model';
 import { Members } from 'src/app/theme/shared/members.model';
+import * as FileSaver from 'file-saver';
 
 
 @Component({
@@ -27,8 +28,13 @@ export class AttendanceComponent implements OnInit {
     event: new FormControl('', [Validators.required, Validators.minLength(4)]),
     present: new FormControl(this.modelForm.present),
   })
-
+  uploadForm = new FormGroup({
+    source: new FormControl('', Validators.required),
+    file: new FormControl(null),
+    userid: new FormControl('', Validators.required)
+  })
   serverErrorMessages = '';
+  serverServerMessages: any;
   search: string;
   space: string = " ";
   model = {
@@ -153,6 +159,60 @@ export class AttendanceComponent implements OnInit {
       }
       
       this.refreshAttendanceList();
+  }
+
+  openUpload(content) {
+    this.uploadForm.reset();
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'})
+  }
+
+  onFileChange(event){
+    var payload = this.userService.getUserPayload();
+    if (event.target.files.length > 0) {
+      const file = event.target.files[0];
+      this.uploadForm.patchValue({
+        file: file,
+        userid: payload._id
+      });
+    }
+  }
+
+  uploadExcel(){
+    const formData = new FormData();
+    formData.append('file', this.uploadForm.get('file').value);
+    formData.append('userid', this.uploadForm.get('userid').value);
+    this.attendanceService.postAttendanceExcel(formData).subscribe(
+    res => {
+      this.serverServerMessages = res as any
+      this.toastr.success(this.serverServerMessages.message, 'File Uploaded');
+      this.refreshAttendanceList();
+      this.modalService.dismissAll();
+    },
+    err => {
+      console.log(err)
+      if (err.status === 400 || 500) {
+        this.toastr.warning( this.serverErrorMessages = err.error, 'Excel Upload Failed')
+      }
+      else
+        this.toastr.error( this.serverErrorMessages = 'Something went wrong. Please contact admin.', 'Error 422')
+    })
+  }
+
+  downloadExcel(){
+    var payLoad = this.userService.getUserPayload();
+    this.attendanceService.getAttendanceExcel(payLoad.classname).subscribe(
+      (res: any) => {
+        this.toastr.success(res.message, 'File Downloaded');
+        FileSaver.saveAs(res.path, `Attendances.xlsx`)
+      },
+      err => {
+        console.log(err)
+        if (err.status === 400 || 500) {
+          this.toastr.warning( this.serverErrorMessages = err.error, 'Excel Download Failed')
+        }
+        else
+          this.toastr.error( this.serverErrorMessages = 'Something went wrong. Please contact admin.', 'Error 422')
+      })  
   }
 
 }
