@@ -7,6 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { PaymentRoutingModule } from './payment-routing.module';
 import { NgbButtonsModule, NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { PaymentFilterPipe } from './payment-filter.pipe';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
   imports: [
@@ -16,8 +17,8 @@ import { PaymentFilterPipe } from './payment-filter.pipe';
     ReactiveFormsModule,
     NgbButtonsModule,
     NgbDropdownModule,
-    NgbTooltipModule
-
+    NgbTooltipModule,
+    NgxPaginationModule
   ],
   declarations: [PaymentComponent, PaymentFilterPipe]
 })

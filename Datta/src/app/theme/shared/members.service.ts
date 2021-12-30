@@ -29,10 +29,6 @@ export class MembersService {
     return this.http.post(environment.apiBaseUrl+'/user/members/uploadExcel', excel);
   }
 
-  getMemberExcel(classname: string){
-    return this.http.get(environment.apiBaseUrl + `/user/members/downloadExcel/${classname}`);
-  }
-
   getMembersList(){
     return this.http.get(environment.apiBaseUrl+'/user/members');
   }

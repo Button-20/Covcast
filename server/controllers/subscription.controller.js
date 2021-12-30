@@ -2,8 +2,6 @@ const mongoose = require('mongoose');
 var  Subscription = require('../models/subscription.model');
 var  User = require('../models/user.model');
 var ObjectId = mongoose.Types.ObjectId;
-const path = require('path');
-const exceljs = require("exceljs");
 
 
 
@@ -111,65 +109,6 @@ module.exports.put = (req, res) => {
 //             else { console.log('Error in Retrieving Subscription :' + JSON.stringify(err, undefined, 2))};
 //         });
 // }
-
-module.exports.downloadExcel = async (req, res) => {
-        console.log('Admin Download')
-        Subscription.find({}, async (err, doc) => {
-            if (!err) {
-                let subscriptions = [];
-    
-                doc.forEach((subscription)  => {
-                    subscriptions.push({
-                        userid: subscription.userid.fullname,
-                        plan_id: subscription.plan_id.name,
-                        subscription_start: subscription.subscription_start,
-                        subscription_end: subscription.subscription_end,
-                        status: subscription.status
-                 
-                    }) 
-                })
-    
-                let workbook = new exceljs.Workbook();
-                let worksheet = workbook.addWorksheet('Subscriptions');
-        
-                worksheet.columns = [
-                    { header: "User Name", key: "userid", width: 20 },
-                    { header: "Plan Name", key: "plan_id", width: 20 },
-                    { header: "Subscription Start", key: "subscription_start", width: 20 },
-                    { header: "Subscription End", key: "subscription_end", width: 20 },
-                    { header: "Status", key: "status", width: 10 }
-                  ];
-    
-                // Add Array Rows
-                worksheet.addRows(subscriptions);
-                
-                // Making first line in excel bold
-                worksheet.getRow(1).eachCell((cell) => {
-                    cell.font = { bold: true, color: { argb: 'FFFF0000' } };
-                    cell.fill = { type: 'pattern', pattern:'solid', fgColor:{ argb:'FFFF33' } }
-                });
-                
-                const route = path.join('./exports/subscriptions');  // Path to download excel
-                    
-                try {
-                    const data = await workbook.xlsx.writeFile(`${route}/${Date.now()}__Subscriptions__Export.xlsx`)
-                     .then(() => {
-                       res.send({
-                         status: "Success",
-                         message: "File successfully downloaded",
-                         path: `${route}/${Date.now()}__Subscriptions__Export.xlsx`,
-                        });
-                     });
-                } catch (err) {
-                      res.status(500).send({
-                      status: "error",
-                      message: "Something went wrong",
-                    });
-                }
-            }
-            else { res.status(500).send({ message: 'Error in Retrieving Subscriptions: ' + JSON.stringify(err, undefined, 2)}), console.log('Error in Retrieving Member: ' + JSON.stringify(err, undefined, 2))};
-        }).populate('plan_id userid');    
-}
 
 function oneMonthFromNow() {
     var d = new Date(); 

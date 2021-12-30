@@ -4,7 +4,7 @@
         <h6 class="mb-4">Daily Sales</h6>
         <div class="row d-flex align-items-center">
           <div class="col-9">
-            <h3 class="f-w-300 d-flex align-items-center m-b-0"><i class="feather icon-arrow-up text-c-green f-30 m-r-10"></i>$249.95</h3>
+            <h3 class="f-w-300 d-flex align-items-center m-b-0"><i class="feather icon-arrow-up text-c-green f-30 m-r-10"></i>$1.312.47</h3>
           </div>
 
           <div class="col-3 text-right">
@@ -49,8 +49,8 @@
     </app-card>
   </div>
   <div class="col-xl-8 col-md-6">
-    <app-card cardTitle="Users From United States">
-      <div id="world-low" style="height:450px;"></div>
+    <app-card cardTitle="Members of Groups">
+      <canvas id="myChart" width="400" height="400"></canvas>
     </app-card>
   </div>
   <div class="col-xl-4 col-md-6">
@@ -63,29 +63,29 @@
           <h3 class="mb-2 text-white f-w-300">$4295.36 <i class="feather icon-arrow-up teal accent-3"></i></h3>
           <span class="text-uppercase text-white d-block">Total Earnings</span>
         </div>
-        <div id="widget-line-chart" class="WidgetlineChart2 ChartShadow" style="height:180px;"></div>
+        <canvas id="widget-line-chart" class="WidgetlineChart2 ChartShadow" style="height:180px;"></canvas>
       </div>
     </div>
     <div class="card">
       <div class="card-block border-bottom">
         <div class="row d-flex align-items-center">
           <div class="col-auto">
-            <i class="feather icon-zap f-30 text-c-green"></i>
+            <i class="feather icon-user f-30 text-c-green"></i>
           </div>
           <div class="col">
-            <h3 class="f-w-300">235</h3>
-            <span class="d-block text-uppercase">TOTAL IDEAS</span>
+            <h3 class="f-w-300">{{memberService.Count}}</h3>
+            <span class="d-block text-uppercase">TOTAL MEMBERS</span>
           </div>
         </div>
       </div>
       <div class="card-block">
         <div class="row d-flex align-items-center">
           <div class="col-auto">
-            <i class="feather icon-map-pin f-30 text-c-blue"></i>
+            <i class="fas fa-money-bill-wave f-30 text-c-blue"></i>
           </div>
           <div class="col">
-            <h3 class="f-w-300">26</h3>
-            <span class="d-block text-uppercase">TOTAL LOCATIONS</span>
+            <h3 class="f-w-300">&cent; {{duesService.Total?.TotalSumOfDues  | number : '1.2-2'}}</h3>
+            <span class="d-block text-uppercase">TOTAL FINANCES</span>
           </div>
         </div>
       </div>
@@ -93,18 +93,18 @@
   </div>
   <div class="col-md-12 col-xl-4">
     <div class="card card-social">
-      <div class="card-block border-bottom">
+      <div class="card-block">
         <div class="row align-items-center justify-content-center">
           <div class="col-auto">
-            <i class="fab fa-facebook-f text-primary f-36"></i>
+            <i class="fas fa-male text-c-blue f-36"></i>
           </div>
           <div class="col text-right">
-            <h3>12,281</h3>
-            <h5 class="text-c-green mb-0">+7.2% <span class="text-muted">Total Likes</span></h5>
+            <h3>{{memberService.maleCount}}</h3>
+            <h5 class="text-c-green mb-0">{{malesPercent | number : '1.1-1'}}% <span class="text-muted">Total Males</span></h5>
           </div>
         </div>
       </div>
-      <div class="card-block">
+      <!-- <div class="card-block">
         <div class="row align-items-center justify-content-center card-active">
           <div class="col-6">
             <h6 class="text-center m-b-10"><span class="text-muted m-r-5">Target:</span>35,098</h6>
@@ -119,23 +119,23 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
   <div class="col-md-6 col-xl-4">
     <div class="card card-social">
-      <div class="card-block border-bottom">
+      <div class="card-block">
         <div class="row align-items-center justify-content-center">
           <div class="col-auto">
-            <i class="fab fa-twitter text-c-blue f-36"></i>
+            <i class="fas fa-female text-c-purple f-36"></i>
           </div>
           <div class="col text-right">
-            <h3>11,200</h3>
-            <h5 class="text-c-purple mb-0">+6.2% <span class="text-muted">Total Likes</span></h5>
+            <h3>{{memberService.femaleCount}}</h3>
+            <h5 class="text-c-purple mb-0">{{femalesPercent | number : '1.1-1'}}% <span class="text-muted">Total Females</span></h5>
           </div>
         </div>
       </div>
-      <div class="card-block">
+      <!-- <div class="card-block">
         <div class="row align-items-center justify-content-center card-active">
           <div class="col-6">
             <h6 class="text-center m-b-10"><span class="text-muted m-r-5">Target:</span>34,185</h6>
@@ -150,23 +150,23 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
   <div class="col-md-6 col-xl-4">
     <div class="card card-social">
-      <div class="card-block border-bottom">
+      <div class="card-block">
         <div class="row align-items-center justify-content-center">
           <div class="col-auto">
-            <i class="fab fa-google-plus-g text-c-red f-36"></i>
+            <i class="fas fa-users text-c-green f-36"></i>
           </div>
           <div class="col text-right">
-            <h3>10,500</h3>
-            <h5 class="text-c-blue mb-0">+5.9% <span class="text-muted">Total Likes</span></h5>
+            <h3>{{attendanceService.count}}</h3>
+            <h5 class="text-c-blue mb-0"><span class="text-muted">Total Attendances</span></h5>
           </div>
         </div>
       </div>
-      <div class="card-block">
+      <!-- <div class="card-block">
         <div class="row align-items-center justify-content-center card-active">
           <div class="col-6">
             <h6 class="text-center m-b-10"><span class="text-muted m-r-5">Target:</span>25,998</h6>
@@ -181,10 +181,10 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
-  <div class="col-xl-4 col-md-6">
+  <!-- <div class="col-xl-4 col-md-6">
     <app-card cardTitle="Rating">
       <div class="row align-items-center justify-content-center m-b-20">
         <div class="col-6">
@@ -232,8 +232,8 @@
         </div>
       </div>
     </app-card>
-  </div>
-  <div class="col-xl-8 col-md-6">
+  </div> -->
+  <!-- <div class="col-xl-8 col-md-6">
     <app-card cardTitle="Recent Users" cardClass="Recent-Users" blockClass="px-0 py-3">
       <div class="table-responsive">
         <table class="table table-hover">
@@ -292,5 +292,5 @@
         </table>
       </div>
     </app-card>
-  </div>
+  </div> -->
 </div>

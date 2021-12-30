@@ -23,7 +23,7 @@
         <button class="btn btn-outline-dark" ngbDropdownToggle type="button">Export</button>
         <div ngbDropdownMenu>
           <a class="dropdown-item" href="javascript:" (click)="downloadExcel()">Export to Excel</a>
-          <a class="dropdown-item" href="javascript:">Export to Pdf</a>
+          <a class="dropdown-item" href="javascript:" (click)="downloadPDF()">Export to Pdf</a>
         </div>
     </div>  
       <button class="btn btn-danger mb-4" type="button" (click)="open(content)">Add Subscription</button>
@@ -45,7 +45,10 @@
                   <!-- <th scope="col">Action</th> -->
                 </tr>
               </thead>
-              <tbody *ngFor="let subscription of subscriptionService.subscription | subFilter: search">
+              <tbody *ngFor="let subscription of subscriptionService.subscription | subFilter: search | paginate: { id: '_id',
+              itemsPerPage: 10,
+              currentPage: page,
+              totalItems: totalRecords }">
               <tr class="read">
                 <!-- <td><img class="rounded-circle" style="width:40px;" src="assets/images/user/avatar-1.jpg" alt="activity-user"></td> -->
                 <td>
@@ -75,6 +78,17 @@
             </table>
           </div>
         </app-card>
+        <pagination-controls  id="_id"
+            (pageChange)="page = $event"
+            directionLinks="true"
+            autoHide="true"
+            responsive="true"
+            previousLabel="Previous"
+            nextLabel="Next"
+            screenReaderPaginationLabel="Pagination"
+            screenReaderPageLabel="page"
+            screenReaderCurrentLabel="You're on page">
+          </pagination-controls>
         </div>
     </div>
   

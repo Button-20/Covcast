@@ -20,11 +20,12 @@
         <button class="btn btn-info mb-4" type="button" (click)="startSearch(model.startdate, model.enddate)">Search</button>
         <button class="btn btn-info mb-4" type="button" (click)="clearSearch()">Clear</button>
         <div class="btn-group mb-4 mr-2" ngbDropdown [placement]="'bottom-left'">
-          <button class="btn btn-outline-dark" ngbDropdownToggle type="button">Export</button>
+          <button class="btn btn-outline-dark" ngbDropdownToggle type="button">More</button>
           <div ngbDropdownMenu>
             <a class="dropdown-item" href="javascript:" (click)="openUpload(uploadcontent)">Upload Excel</a>
             <a class="dropdown-item" href="javascript:" (click)="downloadExcel()">Export to Excel</a>
-            <a class="dropdown-item" href="javascript:">Export to Pdf</a>
+            <a class="dropdown-item" href="javascript:" (click)="downloadPDF()">Export to Pdf</a>
+            <a class="dropdown-item" href="assets/upload-templates/Dues.xlsx">Export Upload Template</a>
           </div>
         </div>  
         <button class="btn btn-danger mb-4" type="button" (click)="open(content)">Add Due</button>

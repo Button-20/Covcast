@@ -12,7 +12,8 @@
           <div ngbDropdownMenu>
             <a class="dropdown-item" href="javascript:" (click)="openUpload(uploadcontent)">Upload Excel</a>
             <a class="dropdown-item" href="javascript:" (click)="downloadExcel()">Export to Excel</a>
-            <a class="dropdown-item" href="javascript:">Export to Pdf</a>
+            <a class="dropdown-item" href="javascript:" (click)="downloadPDF()">Export to Pdf</a>
+            <a class="dropdown-item" href="assets/upload-templates/Members.xlsx">Export Upload Template</a>
           </div>
         </div>
         <button class="btn btn-danger mb-4" type="button" (click)="open(content)">Add Members</button>
@@ -25,7 +26,7 @@
             <table class="table table-hover">
               <thead>
                 <tr>
-                  <!-- <th scope="col">#</th> -->
+                  <th scope="col" *ngIf="Admin.classname === 'Admin' ">Class Name</th>
                   <th scope="col">First Name</th>
                   <th scope="col">Last Name</th>
                   <th scope="col">Other Name</th>
@@ -37,9 +38,15 @@
                   <th scope="col">Action</th>
                 </tr>
               </thead>
-              <tbody *ngFor="let mem of memberService.members | memFilter: search">
+              <tbody *ngFor="let mem of memberService.members | memFilter: search | paginate: { id: '_id',
+              itemsPerPage: 10,
+              currentPage: page,
+              totalItems: totalRecords }">
               <tr class="unread">
                 <!-- <td><img class="rounded-circle" style="width:40px;" src="assets/images/user/avatar-1.jpg" alt="activity-user"></td> -->
+                <td *ngIf="Admin.classname === 'Admin' ">
+                  <h6 class="mb-1">{{mem.classname}}</h6>
+                </td>
                 <td>
                   <h6 class="mb-1">{{mem.firstname}}</h6>
                 </td>
@@ -59,7 +66,7 @@
                   <h6 class="mb-1">{{mem.digitaladdress}}</h6>
                 </td>
                 <td>
-                  <h6 class="mb-1" *ngIf="premiumPlan; else standardPlan"><a href="javascript:" (click)="openSmsForm(smscontent, $event)">{{mem.phonenumber}}</a></h6>
+                  <h6 class="mb-1"><a *ngIf="premiumPlan; else standardPlan"a href="javascript:" (click)="openSmsForm(smscontent, $event)">{{mem.phonenumber}}</a></h6>
                   <ng-template #standardPlan><h6 class="mb-1">{{mem.phonenumber}}</h6></ng-template> 
                 </td>
                 <td>
@@ -74,6 +81,17 @@
             </table>
           </div>
         </app-card>
+          <pagination-controls  id="_id"
+            (pageChange)="page = $event"
+            directionLinks="true"
+            autoHide="true"
+            responsive="true"
+            previousLabel="Previous"
+            nextLabel="Next"
+            screenReaderPaginationLabel="Pagination"
+            screenReaderPageLabel="page"
+            screenReaderCurrentLabel="You're on page">
+          </pagination-controls>  
         </div>
     </div>
   

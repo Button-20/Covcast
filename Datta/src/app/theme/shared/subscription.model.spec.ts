@@ -1,7 +1,7 @@
-import { Payment } from './payment.model';
+import { Subscription } from "./subscription.model";
 
-describe('Payment', () => {
+describe('Subscription', () => {
   it('should create an instance', () => {
-    expect(new Payment()).toBeTruthy();
+    expect(new Subscription()).toBeTruthy();
   });
 });

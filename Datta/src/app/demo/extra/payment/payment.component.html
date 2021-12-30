@@ -3,7 +3,7 @@
     <div class="col-sm-12">
       <div class="form-group">
         <input type="text" class="form-control w-50" id="search" aria-describedby="searchHelp" placeholder="Search" [(ngModel)]="search">
-        <small id="searchHelp" class="form-text text-muted">Search for Payments by ......</small>
+        <small id="searchHelp" class="form-text text-muted">Search for Payments by Type, Status, Phone Number, Transaction Code, Mode Of Payment and Subscription Plan</small>
       </div>
     </div>
     <div class="col">
@@ -23,7 +23,7 @@
         <button class="btn btn-outline-dark" ngbDropdownToggle type="button">Export</button>
         <div ngbDropdownMenu>
           <a class="dropdown-item" href="javascript:" (click)="downloadExcel()">Export to Excel</a>
-          <a class="dropdown-item" href="javascript:">Export to Pdf</a>
+          <a class="dropdown-item" href="javascript:" (click)="downloadPDF()">Export to Pdf</a>
         </div>
     </div>  
       <button class="btn btn-danger mb-4" type="button" (click)="open(content)">Make Payment</button>
@@ -49,7 +49,10 @@
                   <!-- <th scope="col">Action</th> -->
                 </tr>
               </thead>
-              <tbody *ngFor="let payment of paymentService.payment | paymentFilter: search">
+              <tbody *ngFor="let payment of paymentService.payment | paymentFilter: search | paginate: { id: '_id',
+              itemsPerPage: 10  ,
+              currentPage: page,
+              totalItems: totalRecords }">
               <tr class="read">
                 <!-- <td><img class="rounded-circle" style="width:40px;" src="assets/images/user/avatar-1.jpg" alt="activity-user"></td> -->
                 <td>
@@ -92,6 +95,17 @@
             </table>
           </div>
         </app-card>
+        <pagination-controls  id="_id"
+          (pageChange)="page = $event"
+          directionLinks="true"
+          autoHide="true"
+          responsive="true"
+          previousLabel="Previous"
+          nextLabel="Next"
+          screenReaderPaginationLabel="Pagination"
+          screenReaderPageLabel="page"
+          screenReaderCurrentLabel="You're on page">
+        </pagination-controls>  
         </div>
     </div>
   

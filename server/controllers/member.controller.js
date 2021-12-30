@@ -5,7 +5,6 @@ var unirest = require('unirest');
 const path = require('path'); 
 const smsApiUrl = 'https://sms.nalosolutions.com/smsbackend/clientapi/Resl_Nalo';
 const readXlsxFile = require("read-excel-file/node");
-const exceljs = require("exceljs");
 
 
 // Registering a Member
@@ -219,30 +218,29 @@ module.exports.uploadExcel = async (req, res) => {
     
           let members = [];
     
-          rows.forEach((row) => {
+            rows.forEach((row) => {
             let member = {
-              classname: row[0],
-              firstname: row[1],
-              lastname: row[2],
-              othername: row[3],
-              gender: row[4],
-              email: row[5],
-              digitaladdress: row[6],
-              phonenumber: row[7],
-              dateofbirth: Date(row[8]),
+                classname: row[0],
+                firstname: row[1],
+                lastname: row[2],
+                othername: row[3],
+                gender: row[4],
+                email: row[5],
+                digitaladdress: row[6],
+                phonenumber: row[7],
+                dateofbirth: Date(row[8]),
             };
             members.push(member);
-            console.log(members);
+        });
+            console.log(members);  
 
             Member.insertMany(members, (err, doc) => {
                 if (!err) { res.status(200).send({
                     message: "Uploaded the file successfully: " + req.file.originalname,
                     result: doc
-                  }); }
+                }); }
                 else { res.status(500).send({ message: 'Error in Members Insert :' + JSON.stringify(err, undefined, 2)}), console.log('Error in Members Insert :' + JSON.stringify(err, undefined, 2))}; 
             });
-    
-          });
         });
         
     }catch(error){
@@ -251,138 +249,4 @@ module.exports.uploadExcel = async (req, res) => {
         message: "Could not upload the file: " + req.file.originalname,
         });
     }
-}
-
-module.exports.downloadExcel = async (req, res) => {
-    if (req.params.classname !== 'Admin') {
-        console.log(req.params.classname)
-        Member.find({classname: req.params.classname}, async (err, doc) => {
-            if (!err) {
-                let members = [];
-    
-                doc.forEach((member)  => {
-                    members.push({
-                        classname: member.classname,
-                        firstname: member.firstname,
-                        lastname: member.lastname,
-                        othername: member.othername,
-                        gender: member.gender,
-                        email: member.email,
-                        digitaladdress: member.digitaladdress,
-                        phonenumber: member.phonenumber,
-                        dateofbirth: member.dateofbirth,      
-                    }) 
-                })
-    
-                let workbook = new exceljs.Workbook();
-                let worksheet = workbook.addWorksheet('Members');
-        
-                worksheet.columns = [
-                    { header: "Class Name", key: "classname", width: 15 },
-                    { header: "First Name", key: "firstname", width: 20 },
-                    { header: "Last Name", key: "lastname", width: 20 },
-                    { header: "Other Name", key: "othername", width: 20 },
-                    { header: "Gender", key: "gender", width: 10 },
-                    { header: "Email", key: "email", width: 28 },
-                    { header: "Digital Address", key: "digitaladdress", width: 20 },
-                    { header: "Phone Number", key: "phonenumber", width: 20 },
-                    { header: "Date Of Birth", key: "dateofbirth", width: 20 },
-                  ];
-    
-                // Add Array Rows
-                worksheet.addRows(members);
-                
-                // Making first line in excel bold
-                worksheet.getRow(1).eachCell((cell) => {
-                    cell.font = { bold: true, color: { argb: 'FFFF0000' } };
-                    cell.fill = { type: 'pattern', pattern:'solid', fgColor:{ argb:'FFFF33' } }
-                });
-                
-                const route = path.join('./exports');  // Path to download excel
-                    
-                try {
-                    const data = await workbook.xlsx.writeFile(`${route}/${Date.now()}__Members__Export.xlsx`)
-                     .then(() => {
-                       res.send({
-                         status: "Success",
-                         message: "File successfully downloaded",
-                         path: `${route}/${Date.now()}__Members__Export.xlsx`,
-                        });
-                     });
-                } catch (err) {
-                      res.status(500).send({
-                      status: "error",
-                      message: "Something went wrong",
-                    });
-                }
-            }
-            else { res.status(500).send({ message: 'Error in Retrieving Member: ' + JSON.stringify(err, undefined, 2)}), console.log('Error in Retrieving Member: ' + JSON.stringify(err, undefined, 2))};
-        });    
-
-    }else{
-        console.log('Admin Download')
-        Member.find({}, async (err, doc) => {
-            if (!err) {
-                let members = [];
-    
-                doc.forEach((member)  => {
-                    members.push({
-                        classname: member.classname,
-                        firstname: member.firstname,
-                        lastname: member.lastname,
-                        othername: member.othername,
-                        gender: member.gender,
-                        email: member.email,
-                        digitaladdress: member.digitaladdress,
-                        phonenumber: member.phonenumber,
-                        dateofbirth: member.dateofbirth,      
-                    }) 
-                })
-    
-                let workbook = new exceljs.Workbook();
-                let worksheet = workbook.addWorksheet('Members');
-        
-                worksheet.columns = [
-                    { header: "Class Name", key: "classname", width: 15 },
-                    { header: "First Name", key: "firstname", width: 20 },
-                    { header: "Last Name", key: "lastname", width: 20 },
-                    { header: "Other Name", key: "othername", width: 20 },
-                    { header: "Gender", key: "gender", width: 10 },
-                    { header: "Email", key: "email", width: 28 },
-                    { header: "Digital Address", key: "digitaladdress", width: 20 },
-                    { header: "Phone Number", key: "phonenumber", width: 20 },
-                    { header: "Date Of Birth", key: "dateofbirth", width: 20 },
-                  ];
-    
-                // Add Array Rows
-                worksheet.addRows(members);
-                
-                // Making first line in excel bold
-                worksheet.getRow(1).eachCell((cell) => {
-                    cell.font = { bold: true, color: { argb: 'FFFF0000' } };
-                    cell.fill = { type: 'pattern', pattern:'solid', fgColor:{ argb:'FFFF33' } }
-                });
-                
-                const route = path.join('./exports');  // Path to download excel
-                    
-                try {
-                    const data = await workbook.xlsx.writeFile(`${route}/${Date.now()}__Members__Export.xlsx`)
-                     .then(() => {
-                       res.send({
-                         status: "Success",
-                         message: "File successfully downloaded",
-                         path: `${route}/${Date.now()}__Members__Export.xlsx`,
-                        });
-                     });
-                } catch (err) {
-                      res.status(500).send({
-                      status: "error",
-                      message: "Something went wrong",
-                    });
-                }
-            }
-            else { res.status(500).send({ message: 'Error in Retrieving Member: ' + JSON.stringify(err, undefined, 2)}), console.log('Error in Retrieving Member: ' + JSON.stringify(err, undefined, 2))};
-        });    
-    }
-
 }

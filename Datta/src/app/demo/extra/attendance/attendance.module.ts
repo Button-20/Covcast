@@ -8,6 +8,7 @@ import { AttendanceComponent } from './attendance.component';
 import {NgbButtonsModule, NgbDropdownModule, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap';
 import { AttendanceFilterPipe } from './filters/attendance-filter.pipe';
 import { AttenmemPipe } from './filters/attenmem.pipe';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import { AttenmemPipe } from './filters/attenmem.pipe';
     NgbButtonsModule,
     NgbDropdownModule,
     NgbTooltipModule,
-    AttendanceRoutingModule
+    AttendanceRoutingModule,
+    NgxPaginationModule
   ],
   declarations: [AttendanceComponent, AttendanceFilterPipe, AttenmemPipe]
 })

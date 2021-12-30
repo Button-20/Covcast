@@ -7,6 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SubscriptionRoutingModule } from './subscription-routing.module';
 import { NgbButtonsModule, NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { SubscriptionFilterPipe } from './subscription-filter.pipe';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
   imports: [
@@ -16,7 +17,8 @@ import { SubscriptionFilterPipe } from './subscription-filter.pipe';
     ReactiveFormsModule,
     NgbButtonsModule,
     NgbDropdownModule,
-    NgbTooltipModule
+    NgbTooltipModule,
+    NgxPaginationModule
 
   ],
   declarations: [SubscriptionComponent, SubscriptionFilterPipe]

@@ -7,6 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MembersListComponent } from './members-list.component';
 import { MemFilterPipe } from './mem-filter.pipe';
 import {NgbButtonsModule, NgbDropdownModule, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
   imports: [
@@ -16,7 +17,8 @@ import {NgbButtonsModule, NgbDropdownModule, NgbTooltipModule} from '@ng-bootstr
     ReactiveFormsModule,
     NgbButtonsModule,
     NgbDropdownModule,
-    NgbTooltipModule
+    NgbTooltipModule,
+    NgxPaginationModule
   ],
   declarations: [MembersListComponent, MemFilterPipe]
 })

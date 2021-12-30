@@ -12,7 +12,7 @@ export class DuesService {
 
   selectedDues : Dues;
   dues: Dues[];
-  Total: DuesTotal[];
+  Total: any;
 
   // noAuthHeader = {headers: new HttpHeaders({'NoAuth' : 'True'})};
 
@@ -24,10 +24,6 @@ export class DuesService {
 
   postDuesExcel(excel){
     return this.http.post(environment.apiBaseUrl+'/user/dues/uploadExcel', excel);
-  }
-
-  getDuesExcel(classname: string){
-    return this.http.get(environment.apiBaseUrl + `/user/dues/downloadExcel/${classname}`);
   }
 
   getDuesList(){
