@@ -66,6 +66,8 @@ router.get('/user/attendance', jwtHelper.verifyJwtToken, ctrlAttendance.get);
 router.get('/user/attendance/:id', jwtHelper.verifyJwtToken, ctrlAttendance.getID);
 router.get('/user/attendancecount/:classname', jwtHelper.verifyJwtToken, ctrlAttendance.getCount);
 router.get('/user/allattendancecount', jwtHelper.verifyJwtToken, ctrlAttendance.getAllCount);
+router.get('/user/allattendance/present/:classname', jwtHelper.verifyJwtToken, ctrlAttendance.getAllPresentCount);
+router.get('/user/allattendance/absent/:classname', jwtHelper.verifyJwtToken, ctrlAttendance.getAllAbsentCount);
 router.get('/user/allattendancedatefilter/:startdate/:enddate', jwtHelper.verifyJwtToken, ctrlAttendance.getAllAttendanceDateFilter);
 router.get('/user/attendance/classname/:classname', jwtHelper.verifyJwtToken, ctrlAttendance.getClassname);
 router.put('/user/attendance/:id', jwtHelper.verifyJwtToken, ctrlAttendance.put);
@@ -75,9 +77,12 @@ router.delete('/user/attendance/:id', jwtHelper.verifyJwtToken, ctrlAttendance.d
 router.post('/user/payment/register', jwtHelper.verifyJwtToken, ctrlPayment.register);
 router.get('/user/payment', jwtHelper.verifyJwtToken, ctrlPayment.get);
 router.get('/user/payment/allpaymentcount', jwtHelper.verifyJwtToken, ctrlPayment.getAllCount);
-router.get('/user/payment/:startdate/:enddate', jwtHelper.verifyJwtToken, ctrlPayment.getAllPaymentDateFilter);
+router.get('/user/filter/payment/:startdate/:enddate', jwtHelper.verifyJwtToken, ctrlPayment.getAllPaymentDateFilter);
 router.get('/user/payment/:id', jwtHelper.verifyJwtToken, ctrlPayment.getID);
 router.get('/user/payment/user/:id', jwtHelper.verifyJwtToken, ctrlPayment.getUserID);
+router.get('/user/payments/summary/daily', jwtHelper.verifyJwtToken, ctrlPayment.getSummaryDaily);
+router.get('/user/payments/summary/monthly', jwtHelper.verifyJwtToken, ctrlPayment.getSummaryMonthly);
+router.get('/user/payments/summary/yearly', jwtHelper.verifyJwtToken, ctrlPayment.getSummaryYearly);
 router.put('/user/payment/:id', jwtHelper.verifyJwtToken, ctrlPayment.put);
 
 // Task => localhost:3000/api/.......

@@ -31,6 +31,7 @@ import {
   Title,
   Tooltip
 } from 'chart.js';
+import { PaymentService } from 'src/app/theme/shared/payment.service';
 
 Chart.register(
   ArcElement,
@@ -66,71 +67,94 @@ Chart.register(
 export class DefaultComponent implements OnInit {
   classnames = [];
   value = [];
-  malesPercent: number;
-  femalesPercent: number;
-  
-  constructor(public userService: UserService, public memberService: MembersService, public duesService: DuesService, public attendanceService: AttendanceService, private cdr: ChangeDetectorRef) { }
+  Admin: any;
+  malesPercent = 0;
+  femalesPercent = 0;
+  dailySum = 0;
+  monthlySum = 0;
+  yearlySum = 0;
+  dailyPercent = 0;
+  monthlyPercent = 0;
+  yearlyPercent = 0;
+  dailyBar = '0%';
+  monthlyBar = '0%';
+  yearlyBar = '0%';
+  normalTemp = 0;
+  abnormalTemp = 0;
+
+
+
+  constructor(public userService: UserService, public memberService: MembersService, public duesService: DuesService, public attendanceService: AttendanceService, public paymentService: PaymentService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.startProcedures();
+    this.Admin = this.userService.getUserPayload();
     setTimeout(() => {
-      const dataType = {
-        labels: this.classnames,
-        datasets: [{
-          label: 'Members of Groups',
-          data: this.value,
-          backgroundColor: this.generateRandomColors(this.classnames.length),
-          hoverOffset: 4
-        }]
-      };
-
-      var pieChart = new Chart('myChart', {
-        type: 'pie',
-        data: dataType,
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-      });
-
-      var barChart = new Chart('widget-line-chart', {
-        type: 'line',
-        data: {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-            datasets: [{
-              label: 'My Earnings',
-              data: [65, 59, 80, 81, 56, 55, 40],
-              fill: false,
-              borderColor: this.generateRandomColors(['January'].length)[0],
-              tension: 0.1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
+      if (this.Admin.classname !== 'Admin') {
+        const data = {
+          labels: ['Normal Temp. (36°C - 37.9°C)', 'Abnormal Temp. (38°C - ∞)'],
+          datasets: [{
+            label: 'Attendance Temp. Chart',
+            data: [this.normalTemp, this.abnormalTemp],
+            backgroundColor: ['#44075e', 'red'],
+            hoverOffset: 4
+          }]
+        };
+  
+        var covidPieChart = new Chart('myCovidChart', {
+          type: 'pie',
+          data: data,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+              scales: {
+                  y: {
+                      beginAtZero: true
+                  }
+              }
+          }
+        });
+      } else {
+        const dataType = {
+          labels: this.classnames,
+          datasets: [{
+            label: 'Members of Groups',
+            data: this.value,
+            backgroundColor: this.generateRandomColors(this.classnames.length),
+            hoverOffset: 4
+          }]
+        };
+  
+        var pieChart = new Chart('myChart', {
+          type: 'pie',
+          data: dataType,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+              scales: {
+                  y: {
+                      beginAtZero: true
+                  }
+              }
+          }
+        });
+      }
 
     }, 1000);
   }
 
   startProcedures(){
     var payLoad = this.userService.getUserPayload();
-     if(payLoad && payLoad.classname == 'Admin'){
+     if(payLoad && payLoad.classname === 'Admin'){
        this.refreshAllTotalDues();
        this.refreshAllMaleCount();
        this.refreshFemaleList();
        this.refreshAllMembersCount();
        this.refreshAllAttendanceCount();
        this.getMemberofGroupsPieChart();
+       this.getDailySummary();
+       this.getMonthlySummary();
+       this.getYearlySummary();
      }
      else{
        this.refreshTotalDues(payLoad.classname);
@@ -138,92 +162,119 @@ export class DefaultComponent implements OnInit {
        this.refreshMembersMaleList(payLoad.classname);
        this.refreshMembersFemaleList(payLoad.classname);  
        this.refreshAttendanceCount(payLoad.classname);
+       this.refreshPresenceCount(payLoad.classname);
+       this.refreshAbsenceCount(payLoad.classname);
+       this.refreshTemp(payLoad.classname);
      }
    }
  
  
+   /////////////////////////////////////////------User-------/////////////////////////////////////////////////////
  
  
+    refreshTotalDues(classname: string){
+      this.duesService.getTotalDues(classname).subscribe((res: any) => {
+        this.duesService.Total = (res.length === 0 ? this.duesService.Total :  res[0].TotalSumOfDues);
+      })
+    }
+
+    refreshMembersMaleList(classname: string){
+      this.memberService.getMembersMaleCount(classname).subscribe((res: any) => {
+        this.memberService.maleCount = res;
+        this.memberService.getMembersClassname(classname).subscribe((res: any) => {
+          this.malesPercent = this.calculatePercent(res.length, this.memberService.maleCount);
+          })
+      })
+    }
+
+    refreshMembersFemaleList(classname: string){
+      this.memberService.getMembersFemaleCount(classname).subscribe((res: any) => {
+        this.memberService.femaleCount = res;
+        this.memberService.getMembersClassname(classname).subscribe((res: any) => {
+          this.femalesPercent = this.calculatePercent(res.length, this.memberService.femaleCount);
+          })
+      })
+    }
+
+    refreshMembersCount(classname: string){
+      this.memberService.getMembersCount(classname).subscribe((res) => {
+        this.memberService.Count = res;
+      })
+    }
+
+    refreshAttendanceCount(classname: string){
+      this.attendanceService.getAttendanceCount(classname).subscribe((res) => {
+        this.attendanceService.count = res;
+      })
+    }
+
+    refreshPresenceCount(classname: string){
+      this.attendanceService.getClassnamePresentCount(classname).subscribe((res: any) => {
+        this.attendanceService.present = res;
+      })
+    }
+
+    refreshAbsenceCount(classname: string){
+      this.attendanceService.getClassnameAbsentCount(classname).subscribe((res: any) => {
+        this.attendanceService.absent = res;
+      })
+    }
  
-   refreshTotalDues(classname: string){
-     this.duesService.getTotalDues(classname).subscribe((res) => {
-       this.duesService.Total = res as DuesTotal[];
-      //  console.log(res);
-     })
-   }
- 
-   refreshMembersMaleList(classname: string){
-     this.memberService.getMembersMaleCount(classname).subscribe((res) => {
-       this.memberService.maleCount = res;
-     })
-   }
- 
-   refreshMembersFemaleList(classname: string){
-     this.memberService.getMembersFemaleCount(classname).subscribe((res) => {
-       this.memberService.femaleCount = res;
-     })
-   }
-   
-   refreshMembersCount(classname: string){
-     this.memberService.getMembersCount(classname).subscribe((res) => {
-       this.memberService.Count = res;
-     })
-   }
- 
-   refreshAttendanceCount(classname: string){
-     this.attendanceService.getAttendanceCount(classname).subscribe((res) => {
-       this.attendanceService.count = res;
-     })
-   }
+    refreshTemp(classname: string){
+      this.attendanceService.getAttendanceClassname(classname).subscribe((res: any) => {
+        let data = [];
+        data = res.map(element => { return element.temperature });
+        var temps = this.calculateCovidTemperatures(data);
+        this.cdr.markForCheck();
+      })
+    }
  
    /////////////////////////////////////////------Admin-------/////////////////////////////////////////////////////
- 
-   refreshAllTotalDues(){
-     this.duesService.getAllTotalDues().subscribe((res: any) => {
-       this.duesService.Total = res[0]
-     })
-   }
- 
-   refreshAllMaleCount(){
-     this.memberService.getAllMaleCount().subscribe((res) => {
-       this.memberService.maleCount = res;
-       this.memberService.getAllMembersCount().subscribe((res: any) => {
-         this.malesPercent = this.calculatePercent(res, this.memberService.maleCount);
-        //  console.log(this.males)
+
+    refreshAllTotalDues(){
+      this.duesService.getAllTotalDues().subscribe((res: any) => {
+        this.duesService.Total = (res.length === 0 ? this.duesService.Total :  res[0].TotalSumOfDues);
       })
-     })
-   }
- 
-   refreshFemaleList(){
-     this.memberService.getAllFemaleCount().subscribe((res) => {
-       this.memberService.femaleCount = res;
-       this.memberService.getAllMembersCount().subscribe((res: any) => {
-        this.femalesPercent = this.calculatePercent(res, this.memberService.femaleCount);
-       //  console.log(this.males)
+    }
+
+    refreshAllMaleCount(){
+      this.memberService.getAllMaleCount().subscribe((res) => {
+        this.memberService.maleCount = res;
+        this.memberService.getAllMembersCount().subscribe((res: any) => {
+          this.malesPercent = this.calculatePercent(res, this.memberService.maleCount);
         })
-     })
-   }
-   
-   refreshAllMembersCount(){
-     this.memberService.getAllMembersCount().subscribe((res) => {
-       this.memberService.Count = res;
-     })
-   }
- 
-   refreshAllAttendanceCount(){
-     this.attendanceService.getAllAttendanceCount().subscribe((res) => {
-       this.attendanceService.count = res;
-     })
-   }
-   
-   getMemberofGroupsPieChart(){
-     this.userService.getUserList().subscribe((res: any) => {
-       let data = [];
-       data = res.map(element => { return element.classname });
-       let filteredData = data.filter((c, index) => { return data.indexOf(c) === index && c !== 'Admin'});
-       
-       filteredData.forEach(cn => {
-         this.memberService.getMembersCount(cn).subscribe((res: any) => {
+      })
+    }
+
+    refreshFemaleList(){
+      this.memberService.getAllFemaleCount().subscribe((res) => {
+        this.memberService.femaleCount = res;
+        this.memberService.getAllMembersCount().subscribe((res: any) => {
+          this.femalesPercent = this.calculatePercent(res, this.memberService.femaleCount);
+          })
+      })
+    }
+
+    refreshAllMembersCount(){
+    this.memberService.getAllMembersCount().subscribe((res) => {
+      this.memberService.Count = res;
+    })
+    }
+
+    refreshAllAttendanceCount(){
+    this.attendanceService.getAllAttendanceCount().subscribe((res) => {
+      this.attendanceService.count = res;
+    })
+    }
+
+    getMemberofGroupsPieChart(){
+      this.userService.getUserList().subscribe((res: any) => {
+        let data = [];
+        data = res.map(element => { return element.classname });
+        let filteredData = data.filter((c, index) => { return data.indexOf(c) === index && c !== 'Admin'});
+        
+        filteredData.forEach(cn => {
+          this.memberService.getMembersCount(cn).subscribe((res: any) => {
           //  console.log(res)
           let group = {
             classname: cn,
@@ -234,25 +285,90 @@ export class DefaultComponent implements OnInit {
         })  
       })
       this.cdr.markForCheck();
-  
-     })
-   }
 
-   generateRandomColors(length){
-    var colors = [];
-    while (colors.length < length) {
-      let rgb = [];
-        for(var i = 0; i < 3; i++)
-        rgb.push(Math.floor(Math.random() * 255));
-        
-      colors.push('rgb('+ rgb.join(',') +')');
+      })
     }
-    return colors;
-   }
 
-   calculatePercent(totalMembers, totalEntity){
-     let percent: number;
-     percent = totalEntity/totalMembers * 100
-     return percent;
-   }
+    getDailySummary(){
+      this.paymentService.getDailySummary().subscribe(async (res: any) => {
+        let total = (res[0]?.amount === undefined ? 0 : res[0].amount)
+        this.dailySum = (this.calculateDailyAverage(total));
+        this.dailyPercent = this.calculatePercent(total, this.dailySum);
+        this.dailyBar = this.dailyPercent.toString() + '%';
+      })
+    }
+    
+    getMonthlySummary(){
+      this.paymentService.getMonthlySummary().subscribe(async (res: any) => {
+        let total = (res[0]?.amount === undefined ? 0 : res[0].amount)
+        this.monthlySum = this.calculateMonthlyAverage(total);
+        this.monthlyPercent = this.calculatePercent(total, this.monthlySum);
+        this.monthlyBar = this.monthlyPercent.toString() + '%';
+      })
+    }
+    
+    getYearlySummary(){
+      this.paymentService.getMonthlySummary().subscribe(async (res: any) => {
+        let total = (res[0]?.amount === undefined ? 0 : res[0].amount)
+        this.userService.getUserList().subscribe((res: any) => {
+          let data = [];
+          data = res.map(element => { return element.classname });
+          let filteredData = data.filter((c, index) => { return data.indexOf(c) === index && c !== 'Admin'});
+          this.yearlySum = this.calculateYearlyAverage(total, filteredData);  
+          this.yearlyPercent = this.calculatePercent(total, this.yearlySum);  
+          this.yearlyBar = this.yearlyPercent.toString() + '%';
+          // console.log(this.yearlyBar)
+        })
+      })
+    }    
+
+   /////////////////////////////////////////------Functions-------/////////////////////////////////////////////////////
+
+    generateRandomColors(length){
+      var colors = [];
+      while (colors.length < length) {
+        let rgb = [];
+          for(var i = 0; i < 3; i++)
+          rgb.push(Math.floor(Math.random() * 255));
+          
+        colors.push('rgb('+ rgb.join(',') +')');
+      }
+      return colors;
+    }
+
+    calculatePercent(totalMembers, totalEntity){
+      let percent: number;
+      percent = totalEntity/totalMembers * 100
+      return percent;
+    }
+
+    calculateDailyAverage(totalSales){
+      let dailyAverage: number;
+      dailyAverage = totalSales / 7;
+      return dailyAverage;
+    }
+
+    calculateMonthlyAverage(totalSales){
+      let monthlyAverage: number;
+      monthlyAverage = totalSales / 12;
+      return monthlyAverage;
+    }
+
+    calculateYearlyAverage(totalSales, filteredData){
+      let yearlyAverage: number;
+      yearlyAverage = totalSales / filteredData.length;
+      return yearlyAverage;
+    }
+
+    calculateCovidTemperatures(temperatures){
+      temperatures.forEach((temp: number) => {
+        if (temp >= 36 && temp <= 37.9) {
+          this.normalTemp++
+        } else if (temp >= 38){
+          this.abnormalTemp++
+        } else {
+          this.abnormalTemp++
+        }
+      });
+    }
 }

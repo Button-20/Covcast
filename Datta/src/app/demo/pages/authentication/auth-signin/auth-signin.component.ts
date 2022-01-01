@@ -32,7 +32,7 @@ export class AuthSigninComponent implements OnInit {
       },
       err => {
         if (err.status === 422) {
-          this.toastr.warning( this.serverErrorMessages = err.error.join('<br/>'), 'User Post Failed')
+          this.toastr.warning( this.serverErrorMessages = err.error.message, 'User Post Failed')
         }
         else
           this.toastr.error( this.serverErrorMessages = 'Something went wrong. Please contact admin.', 'Error 422')

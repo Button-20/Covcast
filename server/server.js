@@ -70,45 +70,8 @@ app.use((err, req, res, next) => {
 app.listen(process.env.PORT, () => {
   console.log(`Server started at port : ${process.env.PORT}`)
 
-  schedule.scheduleJob('0 0 * * *', function(){
+  schedule.scheduleJob('* * * * *', function(){
     console.log('Runs every minute');
-
-// Checks for user login permissions and put them at their rightful positions
-    User.find((err, docs) => {
-      if (!err) {
-        docs.forEach(user => {
-          if (user.loginPermission === false && new Date(user.subscription.subscription_end) < Date.now()) {
-            console.log('User cannot login and Subscription Period is past')
-          } else if (user.loginPermission === true && new Date(user.subscription.subscription_end) < Date.now()){
-
-            var data = {
-              loginPermission: false,
-            }
-            User.findByIdAndUpdate(user._id, {$set: data}, {new: true}, (err, doc) => {
-              if (!err) { console.log(doc) }
-              else { console.log('Error in User Update :' + JSON.stringify(err, undefined, 2))}; 
-            });
-            console.log('User can login but Subscription Period is past')
-
-          } else if (user.loginPermission === false && new Date(user.subscription.subscription_end) > Date.now()){
-
-            var data = {
-              loginPermission: true,
-            }
-            User.findByIdAndUpdate(user._id, {$set: data}, {new: true}, (err, doc) => {
-              if (!err) { console.log(doc) }
-              else { console.log('Error in User Update :' + JSON.stringify(err, undefined, 2))}; 
-            });
-            console.log('User cannot login but Subscription Period is yet to come')
-
-          } else if (user.subscription === null || user.subscription === ''){
-            console.log('User does have subscription: ' + user)
-          } else
-            console.log(!err ? 'User Checks Done' : 'Error in retrieving subscriptions for a User:' + JSON.stringify(err, undefined, 2))
-        })
-      }
-      else { console.log('Error in retrieving Users :' + JSON.stringify(err, undefined, 2))}
-    }).populate('subscription');
 
 // Checks for subscription periods and sets status to their rightful states
     Subscription.find((err, docs) => {
@@ -145,5 +108,47 @@ app.listen(process.env.PORT, () => {
       else { console.log('Error in retrieving subscriptions:' + JSON.stringify(err, undefined, 2))}
     })
   })
+
+  schedule.scheduleJob('0 0 * * *', function(){
+    console.log('Runs every dawn');
+
+    // Checks for user login permissions and put them at their rightful positions
+    User.find((err, docs) => {
+      if (!err) {
+        docs.forEach(user => {
+          if (user.loginPermission === false && new Date(user.subscription.subscription_end) < Date.now()) {
+            console.log('User cannot login and Subscription Period is past')
+          } else if (user.loginPermission === true && new Date(user.subscription.subscription_end) < Date.now()){
+
+            var data = {
+              loginPermission: false,
+            }
+            User.findByIdAndUpdate(user._id, {$set: data}, {new: true}, (err, doc) => {
+              if (!err) { console.log(doc) }
+              else { console.log('Error in User Update :' + JSON.stringify(err, undefined, 2))}; 
+            });
+            console.log('User can login but Subscription Period is past')
+
+          } else if (user.loginPermission === false && new Date(user.subscription.subscription_end) > Date.now()){
+
+            var data = {
+              loginPermission: true,
+            }
+            User.findByIdAndUpdate(user._id, {$set: data}, {new: true}, (err, doc) => {
+              if (!err) { console.log(doc) }
+              else { console.log('Error in User Update :' + JSON.stringify(err, undefined, 2))}; 
+            });
+            console.log('User cannot login but Subscription Period is yet to come')
+
+          } else if (user.subscription === null || user.subscription === ''){
+            console.log('User does have subscription: ' + user)
+          } else
+            console.log(!err ? 'User Checks Done' : 'Error in retrieving subscriptions for a User:' + JSON.stringify(err, undefined, 2))
+        })
+      }
+      else { console.log('Error in retrieving Users :' + JSON.stringify(err, undefined, 2))}
+    }).populate('subscription');
+  })
+
 });
 

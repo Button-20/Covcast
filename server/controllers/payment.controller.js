@@ -169,6 +169,7 @@ module.exports.getUserID = (req, res) => {
 
 // Filter by date
 module.exports.getAllPaymentDateFilter = (req, res) => {
+    console.log(req.params)
     Payment.find({createdAt: {$gte: req.params.startdate, $lte: req.params.enddate}}, (err, doc) => {
         if (!err) { res.send(doc); }
         else { console.log('Error in Retrieving Payment with createdAt :' + JSON.stringify(err, undefined, 2))};
@@ -215,6 +216,39 @@ module.exports.put = (req, res) => {
 //             else { console.log('Error in Retrieving Attendance :' + JSON.stringify(err, undefined, 2))};
 //         });
 // }
+
+module.exports.getSummaryDaily = (req, res) => {
+    Payment.aggregate([
+        { $match: {status: "Pending"} },
+        { $group: { _id: { dayOfWeek: { $dayOfWeek: "$createdAt"} }, amount: { $sum: "$amount" } } },
+        // { $project: { _id: null , totalAmount: "$amount"} }
+    ], (err, doc) => {
+        if (!err) { res.send(doc); }
+        else { console.log('Error in Getting Daily Summary :' + JSON.stringify(err, undefined, 2))}; 
+    })
+}
+
+module.exports.getSummaryMonthly = (req, res) => {
+    Payment.aggregate([
+        { $match: {status: "Pending"} },
+        { $group: { _id: { month: { $month: "$createdAt" } }, amount: { $sum: "$amount" } } },
+        // { $project: { _id: null , totalAmount: "$amount"} }
+    ], (err, doc) => {
+        if (!err) { res.send(doc); }
+        else { console.log('Error in Getting Monthly Summary :' + JSON.stringify(err, undefined, 2))}; 
+    })
+}
+
+module.exports.getSummaryYearly = (req, res) => {
+    Payment.aggregate([
+        { $match: {status: "Pending"} },
+        { $group: { _id: { year: { $year: "$createdAt" } }, amount: { $sum: "$amount" } } },
+        // { $project: { _id: null , totalAmount: "$amount"} }
+    ], (err, doc) => {
+        if (!err) { res.send(doc); }
+        else { console.log('Error in Getting Yearly Summary :' + JSON.stringify(err, undefined, 2))}; 
+    })
+}
 
 function oneMonthFromNow() {
     var d = new Date(); 

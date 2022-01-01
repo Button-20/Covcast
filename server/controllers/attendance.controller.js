@@ -48,6 +48,22 @@ module.exports.getAllCount = (req, res) => {
     });
 }
 
+// Getting all present attendance count
+module.exports.getAllPresentCount = (req, res) => {
+    Attendance.countDocuments({classname: req.params.classname, present: true}, (err, docs) => {
+        if (!err) { res.json(docs); }
+        else { console.log('Error in retrieving Attendance Count :' + JSON.stringify(err, undefined, 2))}
+    });
+}
+
+// Getting all absent attendance count
+module.exports.getAllAbsentCount = (req, res) => {
+    Attendance.countDocuments({classname: req.params.classname, present: false}, (err, docs) => {
+        if (!err) { res.json(docs); }
+        else { console.log('Error in retrieving Attendance Count :' + JSON.stringify(err, undefined, 2))}
+    });
+}
+
 // Getting all attendance count with classname
 module.exports.getCount = (req, res) => {
     Attendance.countDocuments({classname: req.params.classname}, (err, docs) => {

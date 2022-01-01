@@ -47,11 +47,14 @@ export class AttendanceComponent implements OnInit {
   data: any[] = [];
   page: number = 1;
   totalRecords: number;
+  Admin: any;
+
 
   constructor(private userService: UserService, public memberService: MembersService, private modalService: NgbModal, private toastr: ToastrService, public attendanceService: AttendanceService, public excelService: ExcelService) { }
 
   ngOnInit() {
     this.refreshAttendanceList();
+    this.Admin = this.userService.getUserPayload();
   }
 
   refreshAttendanceList(){

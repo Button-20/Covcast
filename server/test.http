@@ -1,7 +1,7 @@
 @API_URL = http://localhost:8000/api
 # @API_URL = https://evening-island-44720.herokuapp.com
 @id = 61a2a0b613273118c43432db
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWJkY2MzNzQzMGM3NDM4NjQ4OThjZjYiLCJyb2xlIjoiQWRtaW4iLCJjbGFzc25hbWUiOiJBZG1pbiIsInBpYyI6ImFzc2V0cy9pbWcvZGVmYXVsdC1hdmF0YXIucG5nIiwibG9naW5QZXJtaXNzaW9uIjp0cnVlLCJpYXQiOjE2NDAzNjQ2MDgsImV4cCI6MTY0MDM2ODIwOH0.F296OLarX864mcoyPhB7pEiQgBhJ5OMa-C9hw_FepGs
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWJkY2MzNzQzMGM3NDM4NjQ4OThjZjYiLCJyb2xlIjoiQWRtaW4iLCJjbGFzc25hbWUiOiJBZG1pbiIsInBpYyI6ImFzc2V0cy9pbWcvZGVmYXVsdC1hdmF0YXIucG5nIiwibG9naW5QZXJtaXNzaW9uIjp0cnVlLCJzdWJzY3JpcHRpb24iOiJQcmVtaXVtIFBsYW4iLCJpYXQiOjE2NDA5Njc4ODAsImV4cCI6MTY0MDk3MTQ4MH0.uBxibzYFP4ekAssdR5wUauxkIQJvGVnAOmTziEHdwR4
 @classname = Hawkers
 
 ##################################################################
@@ -141,3 +141,44 @@ Authorization: Bearer {{token}}
   "status": "Completed",
   "enddate": "2021-12-24T16:53:00.000Z"
 }
+
+##################################################################
+
+### GET PAYMENT DAILY SUMMARY
+
+GET {{API_URL}}/user/payments/summary/daily
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+##################################################################
+
+### GET PAYMENT MONTHLY SUMMARY
+
+GET {{API_URL}}/user/payments/summary/monthly
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+##################################################################
+
+### GET PAYMENT YEARLY SUMMARY
+
+GET {{API_URL}}/user/payments/summary/yearly
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+##################################################################
+
+### GET ALL PAYMENTS
+
+GET {{API_URL}}/user/payment
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+##################################################################
+
+### GET ALL ATTENDANCE WITH CLASSNAME PRESENT
+
+GET {{API_URL}}/user/allattendance/present/ABBA
+Content-Type: application/json
+Authorization: Bearer {{token}}
+

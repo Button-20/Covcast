@@ -25,7 +25,18 @@ export class PaymentService {
   }
 
   getDateRangeFilter(startdate: string, enddate: string){
-    return this.http.get(environment.apiBaseUrl + `/user/payment/${startdate}/${enddate}`);
+    return this.http.get(environment.apiBaseUrl + `/user/filter/payment/${startdate}/${enddate}`);
   }
 
+  getDailySummary(){
+    return this.http.get(environment.apiBaseUrl+'/user/payments/summary/daily');
+  }
+
+  getMonthlySummary(){
+    return this.http.get(environment.apiBaseUrl+'/user/payments/summary/monthly');
+  }
+
+  getYearlySummary(){
+    return this.http.get(environment.apiBaseUrl+'/user/payments/summary/yearly');
+  }
 }

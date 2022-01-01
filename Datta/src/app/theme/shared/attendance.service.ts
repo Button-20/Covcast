@@ -12,6 +12,8 @@ export class AttendanceService {
   selectedAttendance : Attendance;
   attendance: Attendance[];
   count: any;
+  present = 0;
+  absent = 0;
 
   noAuthHeader = {headers: new HttpHeaders({'NoAuth' : 'True'})};
 
@@ -35,6 +37,14 @@ export class AttendanceService {
 
   getAllAttendanceCount(){
     return this.http.get(environment.apiBaseUrl + '/user/allattendancecount');
+  }
+  
+  getClassnamePresentCount(classname: string){
+    return this.http.get(environment.apiBaseUrl + `/user/allattendance/present/${classname}`);
+  }
+
+  getClassnameAbsentCount(classname: string){
+    return this.http.get(environment.apiBaseUrl + `/user/allattendance/absent/${classname}`);
   }
 
   getDateRangeFilter(startdate: string, enddate: string){

@@ -52,7 +52,9 @@ module.exports.authenticate = (req, res, next) => {
         else if (user){
             try {
                 Subscription.findById(user.subscription, async (err, doc) => {
-                    if (!err) return res.status(200).json({"token": await user.generateJwt(doc.plan_id.name)});
+                    // console.log(doc)
+                    if (doc === null) return res.status(422).json({message: 'You do not have a subscription. Please contact admin.'});
+                    else if (!err) return res.status(200).json({"token": await user.generateJwt(doc.plan_id.name)});
                     else { console.log('Error in Retrieving Subscription on Token Generation :' + JSON.stringify(err, undefined, 2))};
                 }).populate('plan_id');        
             } catch (error) {
@@ -95,8 +97,7 @@ module.exports.put = (req, res) => {
             email: req.body.email,
             occupation: req.body.occupation,
             address: req.body.address,
-            loginPermission: req.body.loginPermission,
-            subscription: req.body.subscription
+            loginPermission: req.body.loginPermission
         }
 
         User.findByIdAndUpdate(req.params.id, {$set: user}, {new: true}, (err, doc) => {

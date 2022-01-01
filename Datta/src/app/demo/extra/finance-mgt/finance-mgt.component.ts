@@ -81,7 +81,6 @@ export class FinanceMgtComponent implements OnInit {
 
 
   dueFormSubmit(){
-    console.log(this.duesForm.value)
     if(this.duesForm.value._id == null){
       this.duesService.postDues(this.duesForm.value).subscribe(
         res => {

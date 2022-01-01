@@ -1,69 +1,84 @@
 <div class="row">
-  <div class="col-md-6 col-xl-4">
+  <div class="col-md-6 col-xl-4" *ngIf="Admin.classname === 'Admin'">
     <app-card [hidHeader]="true">
         <h6 class="mb-4">Daily Sales</h6>
         <div class="row d-flex align-items-center">
           <div class="col-9">
-            <h3 class="f-w-300 d-flex align-items-center m-b-0"><i class="feather icon-arrow-up text-c-green f-30 m-r-10"></i>$1.312.47</h3>
+            <h3 class="f-w-300 d-flex align-items-center m-b-0"><i class="far fa-calendar-alt text-c-green f-30 m-r-10"></i>&cent;{{ dailySum | number : '1.2-2' }}</h3>
           </div>
 
           <div class="col-3 text-right">
-            <p class="m-b-0">67%</p>
+            <p class="m-b-0">{{ dailyPercent | number : '1.2-2' }}%</p>
           </div>
         </div>
         <div class="progress m-t-30" style="height: 7px;">
-          <div class="progress-bar progress-c-theme" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+          <div class="progress-bar progress-c-theme" role="progressbar" [ngStyle]="{'width': dailyBar}" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
     </app-card>
   </div>
-  <div class="col-md-6 col-xl-4">
+  <div class="col-md-6 col-xl-4" *ngIf="Admin.classname === 'Admin'">
     <app-card [hidHeader]="true">
       <h6 class="mb-4">Monthly Sales</h6>
       <div class="row d-flex align-items-center">
         <div class="col-9">
-          <h3 class="f-w-300 d-flex align-items-center  m-b-0"><i class="feather icon-arrow-down text-c-red f-30 m-r-10"></i>$2.942.32</h3>
+          <h3 class="f-w-300 d-flex align-items-center  m-b-0"><i class="far fa-calendar-alt text-c-red f-30 m-r-10"></i>&cent;{{ monthlySum | number : '1.2-2' }}</h3>
         </div>
         <div class="col-3 text-right">
-          <p class="m-b-0">36%</p>
+          <p class="m-b-0">{{ monthlyPercent | number : '1.2-2' }}%</p>
         </div>
       </div>
       <div class="progress m-t-30" style="height: 7px;">
-        <div class="progress-bar progress-c-theme2" role="progressbar" style="width: 35%;" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
+        <div class="progress-bar progress-c-theme2" role="progressbar" [ngStyle]="{'width': monthlyBar}" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
     </app-card>
   </div>
-  <div class="col-md-12 col-xl-4">
+  <div class="col-md-12 col-xl-4" *ngIf="Admin.classname === 'Admin'" >
     <app-card [hidHeader]="true">
       <h6 class="mb-4">Yearly Sales</h6>
       <div class="row d-flex align-items-center">
         <div class="col-9">
-          <h3 class="f-w-300 d-flex align-items-center  m-b-0"><i class="feather icon-arrow-up text-c-green f-30 m-r-10"></i>$8.638.32</h3>
+          <h3 class="f-w-300 d-flex align-items-center  m-b-0"><i class="far fa-calendar-alt text-c-blue f-30 m-r-10"></i>&cent;{{ yearlySum | number : '1.2-2' }}</h3>
         </div>
         <div class="col-3 text-right">
-          <p class="m-b-0">80%</p>
+          <p class="m-b-0">{{ yearlyPercent | number : '1.2-2' }}%</p>
         </div>
       </div>
       <div class="progress m-t-30" style="height: 7px;">
-        <div class="progress-bar progress-c-theme" role="progressbar" style="width: 70%;" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
+        <div class="progress-bar progress-c-theme" role="progressbar" [ngStyle]="{'width': yearlyBar}" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
     </app-card>
   </div>
   <div class="col-xl-8 col-md-6">
-    <app-card cardTitle="Members of Groups">
+    <app-card cardTitle="Members of Groups" *ngIf="Admin.classname === 'Admin'">
       <canvas id="myChart" width="400" height="400"></canvas>
+    </app-card>
+    <app-card cardTitle="Member's Temperatures" *ngIf="Admin.classname !== 'Admin'">
+      <canvas id="myCovidChart" width="400" height="400"></canvas>
     </app-card>
   </div>
   <div class="col-xl-4 col-md-6">
-    <div class="card bg-c-blue">
-      <div class="card-header borderless">
-        <h5 class="text-white">Earnings</h5>
-      </div>
-      <div class="card-block" style="padding:0 25px;">
-        <div class="earning-text mb-0">
-          <h3 class="mb-2 text-white f-w-300">$4295.36 <i class="feather icon-arrow-up teal accent-3"></i></h3>
-          <span class="text-uppercase text-white d-block">Total Earnings</span>
+    <div class="card bg-c-blue text-white">
+      <div class="card-block border-bottom">
+        <div class="row d-flex align-items-center">
+          <div class="col-auto">
+            <i class="fas fa-times-circle f-30 text-c-red"></i>
+          </div>
+          <div class="col">
+            <h3 class="f-w-300 text-white">{{ attendanceService.absent }}</h3>
+            <span class="d-block text-uppercase">TOTAL ABSENT ATTENDANCES</span>
+          </div>
         </div>
-        <canvas id="widget-line-chart" class="WidgetlineChart2 ChartShadow" style="height:180px;"></canvas>
+      </div>
+      <div class="card-block">
+        <div class="row d-flex align-items-center">
+          <div class="col-auto">
+            <i class="fas fa-check-circle f-30 text-c-green"></i>
+          </div>
+          <div class="col">
+            <h3 class="f-w-300 text-white">{{ attendanceService.present }}</h3>
+            <span class="d-block text-uppercase">TOTAL PRESENT ATTENDANCES</span>
+          </div>
+        </div>
       </div>
     </div>
     <div class="card">
@@ -84,7 +99,7 @@
             <i class="fas fa-money-bill-wave f-30 text-c-blue"></i>
           </div>
           <div class="col">
-            <h3 class="f-w-300">&cent; {{duesService.Total?.TotalSumOfDues  | number : '1.2-2'}}</h3>
+            <h3 class="f-w-300">&cent; {{duesService.Total | number : '1.2-2'}}</h3>
             <span class="d-block text-uppercase">TOTAL FINANCES</span>
           </div>
         </div>

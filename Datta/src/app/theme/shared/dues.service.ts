@@ -12,7 +12,7 @@ export class DuesService {
 
   selectedDues : Dues;
   dues: Dues[];
-  Total: any;
+  Total = 0;
 
   // noAuthHeader = {headers: new HttpHeaders({'NoAuth' : 'True'})};
 

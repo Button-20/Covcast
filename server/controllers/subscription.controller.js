@@ -6,7 +6,7 @@ var ObjectId = mongoose.Types.ObjectId;
 
 
 // Registering Subscription
-module.exports.register = (req, res, next) => {
+module.exports.register = async (req, res, next) => {
     if (req.body.type === 'Monthly') {
         var subscription = new Subscription({
             userid: req.body.userid,
@@ -25,12 +25,12 @@ module.exports.register = (req, res, next) => {
     if (req.body.userid == null || req.body.userid == "" || req.body.plan_id == null || req.body.plan_id == ""){
         res.status(422).send(['Ensure all fields were provided.']);
     }else{
-        subscription.save((err, doc) => {
+        subscription.save(async (err, doc) => {
                 if (!err){
                     var user = {
                         subscription: doc._id
                     }         
-                    User.findByIdAndUpdate(req.body.userid, {$set: user}, {new: true}, (err, doc) => {
+                    await User.findByIdAndUpdate(req.body.userid, {$set: user}, {new: true}, (err, doc) => {
                         if (!err) { res.send(doc); }
                         else { console.log('Error in User Update :' + JSON.stringify(err, undefined, 2))}; 
                     });
