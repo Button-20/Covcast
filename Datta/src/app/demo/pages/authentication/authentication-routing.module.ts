@@ -5,10 +5,10 @@ const routes: Routes = [
   {
     path: '',
     children: [
-      {
-        path: 'signup',
-        loadChildren: () => import('./auth-signup/auth-signup.module').then(m => m.AuthSignupModule)
-      },
+      // {
+      //   path: 'signup',
+      //   loadChildren: () => import('./auth-signup/auth-signup.module').then(m => m.AuthSignupModule)
+      // },
       {
         path: 'signin',
         loadChildren: () => import('./auth-signin/auth-signin.module').then(m => m.AuthSigninModule)
@@ -16,6 +16,10 @@ const routes: Routes = [
       {
         path: 'reset-password',
         loadChildren: () => import('./auth-reset-password/auth-reset-password.module').then(m => m.AuthResetPasswordModule)
+      },
+      {
+        path: 'reset-password/confirm/:token',
+        loadChildren: () => import('./auth-confirm-password/auth-confirm-password.module').then(m => m.AuthConfirmPasswordModule)
       }
     ]
   }

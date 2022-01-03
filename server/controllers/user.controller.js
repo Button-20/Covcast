@@ -3,12 +3,13 @@ var ObjectId = require('mongoose').Types.ObjectId;
 const User = require('../models/user.model');
 const Subscription = require('../models/subscription.model');
 const nodemailer = require('nodemailer');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: 'jasonaddy51@gmail.com',
-        pass: 'sukumvveotsvxjuc'
+        pass: 'gxpbewhpsvwaqdun'
     }
 });
 
@@ -106,7 +107,6 @@ module.exports.put = (req, res) => {
         });
 }
 
-
 module.exports.resetPassword = (req, res) => {
     User.findOne({ email: req.params.email}, (err, doc) => {
         if (err) { console.log('Error in Retrieving User :' + JSON.stringify(err, undefined, 2))}
@@ -118,20 +118,74 @@ module.exports.resetPassword = (req, res) => {
                     from: 'Localhost Staff, staff@localhost.com',
                     to: req.params.email,
                     subject: 'Password Reset',
-                    text: 'Hello ' + doc.fullname + ', thank you for registering at localhost.com. Please click on the link to complete the reset process: http://localhost:8080/reset-password/' + token,
-                    html: 'Hello <strong>'+ doc.fullname +'</strong>, <br><br> You recently requested a password reset link. Please click on the link below to reset your password:<br><br><a href="http://localhost:8080/reset-password/'+ token +'">http://localhost:8080/reset-password/</a>'
+                    text: 'Hello ' + doc.fullname + ', thank you for registering at localhost.com. Please click on the link to complete the reset process: http://localhost:4200/auth/reset-password/confirm/' + token,
+                    html: 'Hello <strong>'+ doc.fullname +'</strong>, <br><br> You recently requested a password reset link. Please click on the link below to reset your password:<br><br><a href="http://localhost:4200/auth/reset-password/confirm/'+ token +'">http://localhost:4200/auth/reset-password/confirm/</a>'
                   },
                   (err, info) => {
                     if(err) console.log(err);
                     else console.log('Email sent: ' + info.response)
                   }
                 );
-                
 
                 res.json({message: 'Password Reset Request has been sent to your email.'});
             }
         };
 })
+}
+
+module.exports.updatePassword = async (req, res) => {
+    // Verify token from url params
+    await jwt.verify(req.params.token, process.env.JWT_SECRET,
+        async (err, decoded) => {
+            if (err)
+                return res.status(422).send({ auth: false, message: 'Password link has expired or is invalid.' });
+            else{
+                //Verify user within database then continue
+                await User.findOne({ email: decoded.email}, (err, doc) => {
+                    if (err) { console.log('Error in Retrieving User :' + JSON.stringify(err, undefined, 2))}
+                    else {
+                        if(doc == null) return res.json({message: 'Email was not found'}) 
+                        else {
+                            if(req.body.password === null || req.body.password === "") {
+                                res.status(422).json({message: 'Password not provided!'});
+                            }else{
+                                
+                                bcrypt.genSalt(10, (err, salt) => {
+                                    bcrypt.hash(req.body.password, salt, (err, hash) => {
+                                        var user = {
+                                            password: hash,
+                                            saltSecret: salt
+                                        }
+                                        User.findOneAndUpdate(decoded.email, {$set: user}, {new: true}, (err, doc) => {
+                                            if (err) {
+                                                console.log('Error in User Password Update :' + JSON.stringify(err, undefined, 2))
+                                            } else {
+                                                // Create email object to send to user
+                                                transporter.sendMail({
+                                                    from: 'Localhost Staff, staff@localhost.com',
+                                                    to: decoded.email,
+                                                    subject: 'Localhost Reset Password',
+                                                    text: 'Hello ' + doc.fullname + ', This email is to notify you that your password was recently reset at localhost.com',
+                                                    html: 'Hello <strong>'+ doc.fullname +'</strong>,<br><br>This email is to notify you that your password was recently reset at localhost.com'
+                                                  },
+                                                  (err, info) => {
+                                                    if(err) console.log(err);
+                                                    else console.log('Email sent: ' + info.response)
+                                                  }
+                                                );
+                                                res.json({message: 'Password Reset Successfully!'});
+                                            }
+                                        })
+                                    });
+                                });
+                            }
+                        }
+                    };
+                })                
+            } 
+        }
+    )
+
 }
 
 // // Updating a member login permission with ID

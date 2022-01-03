@@ -10,11 +10,12 @@ const ctrlTask = require('../controllers/task.controller');
 const ctrlPlan = require('../controllers/plan.controller');
 const ctrlSubscription = require('../controllers/subscription.controller');
 const ctrlPayment = require('../controllers/payment.controller');
-const uploadFile = require('../controllers/member.controller');
+// const uploadFile = require('../controllers/member.controller');
 
 // Users
 router.post('/register', ctrlUser.register);
 router.get('/reset-password/:email', ctrlUser.resetPassword);
+router.post('/password-reset/confirm/:token', ctrlUser.updatePassword);
 router.post('/authenticate', ctrlUser.authenticate);
 router.get('/users', jwtHelper.verifyJwtToken, ctrlUser.get);
 router.get('/users/:id',jwtHelper.verifyJwtToken, ctrlUser.getID);

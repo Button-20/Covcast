@@ -92,7 +92,7 @@ export class DefaultComponent implements OnInit {
     setTimeout(() => {
       if (this.Admin.classname !== 'Admin') {
         const data = {
-          labels: ['Normal Temp. (36°C - 37.9°C)', 'Abnormal Temp. (38°C - ∞)'],
+          labels: ['Normal Temp. (35.5°C - 37.9°C)', 'Abnormal Temp. (38°C - ∞)'],
           datasets: [{
             label: 'Attendance Temp. Chart',
             data: [this.normalTemp, this.abnormalTemp],
@@ -362,7 +362,7 @@ export class DefaultComponent implements OnInit {
 
     calculateCovidTemperatures(temperatures){
       temperatures.forEach((temp: number) => {
-        if (temp >= 36 && temp <= 37.9) {
+        if (temp >= 35.5 && temp <= 37.9) {
           this.normalTemp++
         } else if (temp >= 38){
           this.abnormalTemp++

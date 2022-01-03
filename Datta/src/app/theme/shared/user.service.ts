@@ -24,6 +24,14 @@ export class UserService {
     return this.http.post(environment.apiBaseUrl + '/authenticate', authCredentials, this.noAuthHeader);
   }
 
+  resetPassword(email){
+    return this.http.get(environment.apiBaseUrl + `/reset-password/${email}`, this.noAuthHeader);
+  }
+
+  confirmNewPassword(token: string, passwordForm){
+    return this.http.post(environment.apiBaseUrl + `/password-reset/confirm/${token}`, passwordForm, this.noAuthHeader);
+  }
+
   postUser(user: User){
     return this.http.post(environment.apiBaseUrl + '/register', user);
   }

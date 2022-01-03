@@ -142,15 +142,7 @@
               <div class="form-group">
                 <label for="othername">Other Name</label>
                 <div class="input-group">
-                  <input id="othername" class="form-control" placeholder="Other Name" name="othername" type="text" minlength="4" formControlName="othername" [ngClass]="(memberForm.get('othername').touched || memberForm.get('othername').dirty) && memberForm.get('othername').errors ? 'is-invalid' : ''" required>
-                  <div *ngIf="memberForm.get('othername').invalid && (memberForm.get('othername').dirty || memberForm.get('othername').touched)" class="invalid-feedback">
-                      <div *ngIf="memberForm.get('othername').errors.required">
-                      This field is required
-                      </div>
-                      <div *ngIf="memberForm.get('othername').errors.minlength">
-                        Minimum 4 characters
-                      </div>
-                  </div>
+                  <input id="othername" class="form-control" placeholder="Other Name" name="othername" type="text" formControlName="othername">
                 </div>
               </div>
               

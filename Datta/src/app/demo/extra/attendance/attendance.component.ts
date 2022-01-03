@@ -135,6 +135,7 @@ export class AttendanceComponent implements OnInit {
 	}
 
   onEdit(content, attendance: Attendance) {
+    console.log(attendance)
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'})
     this.attendanceForm.setValue({
       _id: attendance._id,

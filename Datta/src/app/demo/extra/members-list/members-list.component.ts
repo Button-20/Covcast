@@ -23,7 +23,7 @@ export class MembersListComponent implements OnInit {
     _id: new FormControl('', Validators.required),
     firstname: new FormControl('', [Validators.required, Validators.minLength(4)]),
     lastname: new FormControl('', [Validators.required, Validators.minLength(4)]),
-    othername: new FormControl('', [Validators.required, Validators.minLength(4)]),
+    othername: new FormControl('', []),
     gender: new FormControl(this.model.gender),
     email: new FormControl('', [Validators.required, Validators.email]),
     digitaladdress: new FormControl('', [Validators.required, Validators.minLength(4)]),
@@ -54,7 +54,10 @@ export class MembersListComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    public memberService: MembersService, private modalService: NgbModal, private toastr: ToastrService, public excelService: ExcelService) { }
+    public memberService: MembersService,
+    private modalService: NgbModal,
+    private toastr: ToastrService,
+    public excelService: ExcelService) { }
 
   ngOnInit() {
     this.refreshMemberList();

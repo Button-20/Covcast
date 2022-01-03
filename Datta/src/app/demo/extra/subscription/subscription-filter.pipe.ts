@@ -10,9 +10,9 @@ export class SubscriptionFilterPipe implements PipeTransform {
     if(!subscription || !searchTerm)
     return subscription;
 
-    return subscription.filter(subscription =>
-      subscription.userid.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) ||
-      subscription.plan_id.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase())
+    return subscription.filter((subscription: any) =>
+      subscription.userid.fullname.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) ||
+      subscription.plan_id.name.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase())
     )
   }
 

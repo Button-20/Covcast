@@ -77,7 +77,12 @@ app.listen(process.env.PORT, () => {
     Subscription.find((err, docs) => {
       if (!err) {
         docs.forEach(subscription => {
-          if (new Date(subscription.subscription_end) < Date.now() && subscription.status === 'Inactive') {
+          if (subscription.userid == null) {
+            Subscription.findByIdAndRemove(subscription._id, (err, doc) => {
+                if (!err) { console.log('Empty Subscription has been deleted'); }
+                else { console.log('Error in Retrieving Subscription :' + JSON.stringify(err, undefined, 2))};
+            });
+          } else if (new Date(subscription.subscription_end) < Date.now() && subscription.status === 'Inactive') {
             console.log('Subscription Period is past and Status is Inactive')
           } else if (new Date(subscription.subscription_end) < Date.now() && subscription.status === 'Active'){
 
@@ -106,7 +111,7 @@ app.listen(process.env.PORT, () => {
         })
       }
       else { console.log('Error in retrieving subscriptions:' + JSON.stringify(err, undefined, 2))}
-    })
+    }).populate('userid')
   })
 
   schedule.scheduleJob('0 0 * * *', function(){
