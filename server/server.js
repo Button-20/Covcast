@@ -33,7 +33,7 @@ const Subscription = require('./models/subscription.model');
 
 
 var app = express();
-var allowedDomains = ['http://localhost:4200', 'https://alias-egroups.web.app'];
+var allowedDomains = ['http://localhost:4200', 'https://alias-egroups.web.app', 'https://a062-154-160-2-92.ngrok.io'];
 
 // middleware
 app.use(bodyParser.json());
