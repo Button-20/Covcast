@@ -140,7 +140,7 @@ export class DefaultComponent implements OnInit {
         });
       }
 
-    }, 1000);
+    }, 2000);
   }
 
   startProcedures(){

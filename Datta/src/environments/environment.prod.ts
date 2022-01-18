@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  apiBaseUrl: "https://sheltered-depths-07870.herokuapp.com/api"
 };
