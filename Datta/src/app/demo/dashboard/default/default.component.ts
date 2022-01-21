@@ -140,7 +140,7 @@ export class DefaultComponent implements OnInit {
         });
       }
 
-    }, 2000);
+    }, 2500);
   }
 
   startProcedures(){
@@ -268,17 +268,17 @@ export class DefaultComponent implements OnInit {
     }
 
     getMemberofGroupsPieChart(){
-      this.userService.getUserList().subscribe((res: any) => {
+      this.userService.getUserList().subscribe(async (res: any) => {
         let data = [];
-        data = res.map(element => { return element.classname });
-        let filteredData = data.filter((c, index) => { return data.indexOf(c) === index && c !== 'Admin'});
+        data = await res.map(element => { return element.classname });
+        let filteredData = await data.filter((c, index) => { return data.indexOf(c) === index && c !== 'Admin'});
         
-        filteredData.forEach(cn => {
-          this.memberService.getMembersCount(cn).subscribe((res: any) => {
+        filteredData.forEach(async cn => {
+          this.memberService.getMembersCount(cn).subscribe(async (res: any) => {
           //  console.log(res)
           let group = {
-            classname: cn,
-            numberofmembers: res
+            classname: await cn,
+            numberofmembers: await res
           }
           this.classnames.push(group.classname);
           this.value.push(group.numberofmembers);

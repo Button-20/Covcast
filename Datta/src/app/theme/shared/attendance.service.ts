@@ -20,47 +20,47 @@ export class AttendanceService {
   constructor(private http: HttpClient) { }
 
   postAttendance(attendance: Attendance){
-    return this.http.post(environment.apiBaseUrl+'/user/attendance/register', attendance);
+    return this.http.post(environment.apiBaseUrl+'/attendance/register', attendance);
   }
 
   postAttendanceExcel(excel){
-    return this.http.post(environment.apiBaseUrl+'/user/attendance/uploadExcel', excel);
+    return this.http.post(environment.apiBaseUrl+'/attendance/uploadExcel', excel);
   }
 
   getAttendanceList(){
-    return this.http.get(environment.apiBaseUrl + '/user/attendance');
+    return this.http.get(environment.apiBaseUrl + '/attendance');
   }
 
   getAttendanceCount(classname: string){
-    return this.http.get(environment.apiBaseUrl + `/user/attendancecount/${classname}`);
+    return this.http.get(environment.apiBaseUrl + `/attendancecount/${classname}`);
   }
 
   getAllAttendanceCount(){
-    return this.http.get(environment.apiBaseUrl + '/user/allattendancecount');
+    return this.http.get(environment.apiBaseUrl + '/allattendancecount');
   }
   
   getClassnamePresentCount(classname: string){
-    return this.http.get(environment.apiBaseUrl + `/user/allattendance/present/${classname}`);
+    return this.http.get(environment.apiBaseUrl + `/allattendance/present/${classname}`);
   }
 
   getClassnameAbsentCount(classname: string){
-    return this.http.get(environment.apiBaseUrl + `/user/allattendance/absent/${classname}`);
+    return this.http.get(environment.apiBaseUrl + `/allattendance/absent/${classname}`);
   }
 
   getDateRangeFilter(startdate: string, enddate: string){
-    return this.http.get(environment.apiBaseUrl + `/user/allattendancedatefilter/${startdate}/${enddate}`);
+    return this.http.get(environment.apiBaseUrl + `/allattendancedatefilter/${startdate}/${enddate}`);
   }
 
   getAttendanceClassname(classname: string){
-    return this.http.get(environment.apiBaseUrl + `/user/attendance/classname/${classname}`);
+    return this.http.get(environment.apiBaseUrl + `/attendance/classname/${classname}`);
   }
 
   putAttendance(attendance: Attendance){
-    return this.http.put(environment.apiBaseUrl+ `/user/attendance/${attendance._id}`, attendance);
+    return this.http.put(environment.apiBaseUrl+ `/attendance/${attendance._id}`, attendance);
   }
 
   deleteAttendance(_id: string){
-    return this.http.delete(environment.apiBaseUrl + `/user/attendance/${_id}`);
+    return this.http.delete(environment.apiBaseUrl + `/attendance/${_id}`);
   }
 
 }

@@ -13,39 +13,39 @@ export class TaskService {
   constructor(private http: HttpClient) { }
 
   postTask(task: Task){
-    return this.http.post(environment.apiBaseUrl+'/user/task/register', task)
+    return this.http.post(environment.apiBaseUrl+'/task/register', task)
   }
 
   getTaskList(){
-    return this.http.get(environment.apiBaseUrl +'/user/task');
+    return this.http.get(environment.apiBaseUrl +'/task');
   }
 
   getTaskById(id: string){
-    return this.http.get(environment.apiBaseUrl + `/user/task/${id}`);
+    return this.http.get(environment.apiBaseUrl + `/task/${id}`);
   }
 
   getTaskCountByClassname(classname: string){
-    return this.http.get(environment.apiBaseUrl + `/user/taskcount/${classname}`);
+    return this.http.get(environment.apiBaseUrl + `/taskcount/${classname}`);
 
   }
   getTaskByClassname(classname: string){
-    return this.http.get(environment.apiBaseUrl + `/user/task/classname/${classname}`);
+    return this.http.get(environment.apiBaseUrl + `/task/classname/${classname}`);
   }
 
   getTaskCount(){
-    return this.http.get(environment.apiBaseUrl + '/user/alltaskcount');
+    return this.http.get(environment.apiBaseUrl + '/alltaskcount');
   }
 
   getDateRangeFilter(startdate: string, enddate: string){
-    return this.http.get(environment.apiBaseUrl + `/user/task/${startdate}/${enddate}`);
+    return this.http.get(environment.apiBaseUrl + `/task/${startdate}/${enddate}`);
   }
 
   putTask(task: Task){
-    return this.http.put(environment.apiBaseUrl + `/user/task/${task._id}`, task);
+    return this.http.put(environment.apiBaseUrl + `/task/${task._id}`, task);
   }
 
   deletePlan(_id: string){
-    return this.http.delete(environment.apiBaseUrl + `/user/task/${_id}`);
+    return this.http.delete(environment.apiBaseUrl + `/task/${_id}`);
   }
 
 }
