@@ -26,7 +26,8 @@ export class AuthConfirmPasswordComponent implements OnInit {
   }
 
   passwordFormSubmit(){
-    if (!this.passwordForm.valid) {
+    console.log('Submitted')
+    if (this.passwordForm.valid) {
       let token = this.activatedRoute.snapshot.params.token;
       this.userService.confirmNewPassword(token, this.passwordForm.value).subscribe(
         async (res: any) => {
