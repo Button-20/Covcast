@@ -118,7 +118,7 @@
             </button>
           </div>
           <div class="modal-body">
-            <form [formGroup]="paymentForm" (ngSubmit)="paymentFormSubmit()">
+            <form [formGroup]="paymentForm" (ngSubmit)="paymentFormSubmit($event)">
               
               <input type="hidden" name="_id" class="form-control" formControlName="_id">
               <input type="hidden" name="userid" class="form-control" formControlName="userid">
@@ -199,7 +199,19 @@
               </div>
     
                 <div class="modal-footer">
-                <button type="submit" class="btn btn-info">Save</button>
+                  <angular4-paystack
+                  [email]="paystackInfo.email"
+                  [amount]="paystackInfo.amount"
+                  [ref]="paystackInfo.ref"
+                  [paystackOptions]="paystackInfo"
+                  [channels]="paystackInfo.channel"
+                  [class]="'btn btn-primary'"
+                  (onClose)="paymentCancel()"
+                  (callback)="paymentFormSubmit($event)"
+                >
+                  Pay with Paystack
+                </angular4-paystack>              
+                <!-- <button type="submit" class="btn btn-info">Save</button> -->
                 <button type="button" class="btn btn-outline-dark" (click)="modal.close('Cancel click')">Cancel</button>
               </div>
             </form>

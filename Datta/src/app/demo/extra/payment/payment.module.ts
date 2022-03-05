@@ -8,6 +8,7 @@ import { PaymentRoutingModule } from './payment-routing.module';
 import { NgbButtonsModule, NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { PaymentFilterPipe } from './payment-filter.pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { Angular4PaystackModule } from 'angular4-paystack';
 
 @NgModule({
   imports: [
@@ -18,7 +19,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
     NgbButtonsModule,
     NgbDropdownModule,
     NgbTooltipModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    Angular4PaystackModule.forRoot('pk_test_02eeec488ebae76eb4d4d5ade993b1ceb9068a91'),
   ],
   declarations: [PaymentComponent, PaymentFilterPipe]
 })

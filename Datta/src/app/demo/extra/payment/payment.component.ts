@@ -29,6 +29,7 @@ export class PaymentComponent implements OnInit {
     phonenumber: new FormControl('', [Validators.required, Validators.minLength(10)]),
     type: new FormControl('', Validators.required),
     description: new FormControl(''),
+    status: new FormControl('')
   })
   search: string;
   space: string = " ";
@@ -43,11 +44,21 @@ export class PaymentComponent implements OnInit {
   footerData: any[][] = [];
   page: number = 1;
   totalRecords: number;
+  title = '';
+  paystackInfo: any = {
+    amount: 100,
+    email: 'jasonaddy51@gmail.com',
+    currency: 'GHS',
+    channel: ['bank'],
+    ref: ''
+  }
 
   constructor(private toastr: ToastrService, private userService: UserService, private modalService: NgbModal, public paymentService: PaymentService, public planService: PlanService, public excelService: ExcelService) { }
 
   ngOnInit() {
     this.refreshPaymentList();
+    this.paystackInfo.ref = Math.ceil(Math.random() * 10e10);
+
   }
 
   refreshPaymentList(){
@@ -73,7 +84,9 @@ export class PaymentComponent implements OnInit {
   }
 
 
-  paymentFormSubmit(){
+  paymentFormSubmit(ref: any){
+    if (ref?.status !== 'success') return this.paymentForm.patchValue({status: 'Success'});
+      console.log(ref?.status)
       this.paymentService.postPayment(this.paymentForm.value).subscribe(
         res => {
           this.paymentForm.reset();
@@ -249,4 +262,16 @@ export class PaymentComponent implements OnInit {
     const pdfObject = jsPDFInvoiceTemplate(props);
   }
 
+  paymentInit() {
+    console.log('Payment initialized');
+  }
+
+  paymentDone(ref: any) {
+    this.title = 'Payment successfull';
+    console.log(this.title, ref);
+  }
+
+  paymentCancel() {
+    console.log('payment failed');
+  }
 }
