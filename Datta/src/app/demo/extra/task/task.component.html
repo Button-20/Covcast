@@ -5,22 +5,27 @@
         <input type="text" class="form-control w-50" id="search" aria-describedby="searchHelp" placeholder="Search" [(ngModel)]="search">
         <small id="searchHelp" class="form-text text-muted">Search for Task by Name, Start Date, End Date, Status or Description</small>
       </div>
-    </div>
-    <div class="col">
-      <div class="form-group d-inline">
-        Start Date
-        <input class="form-control d-inline" type="date" style="width: 160px;" [(ngModel)]="model.startdate">
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
+          <div class="d-flex">
+            <div class="form-group">
+              <label for="startdate" class="pr-1">Start Date</label>
+              <input class="form-control d-inline" id="startdate" type="date" style="width: 160px;" [(ngModel)]="model.startdate">
+            </div>  
+            <div class="form-group pl-2">
+              <label for="enddate" class="pr-1">To End Date</label>
+              <input class="form-control d-inline" id="enddate" type="date" style="width: 160px;" [(ngModel)]="model.enddate">
+            </div>  
+          </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-6">
+          <div class="form-group d-md-flex justify-content-end">
+            <button class="btn btn-info mb-4" type="button" (click)="startSearch(model.startdate, model.enddate)">Search</button>
+            <button class="btn btn-info mb-4" type="button" (click)="clearSearch()">Clear</button>
+            <button class="btn btn-danger mb-4" type="button" (click)="open(content)">Add Task</button>
+          </div>            
+        </div>
       </div>
-      <div class="form-group d-inline">
-        To &nbsp;
-        End Date
-        <input class="form-control d-inline" type="date" style="width: 160px;" [(ngModel)]="model.enddate">
-      </div>
-    </div>
-    <div class="form-group">
-      <button class="btn btn-info mb-4" type="button" (click)="startSearch(model.startdate, model.enddate)">Search</button>
-      <button class="btn btn-info mb-4" type="button" (click)="clearSearch()">Clear</button>
-      <button class="btn btn-danger mb-4" type="button" (click)="open(content)">Add Task</button>
     </div>
   </div>
   <div class="row">

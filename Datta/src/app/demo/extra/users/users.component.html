@@ -1,13 +1,15 @@
 <div class="container">
   <div class="row">
-    <div class="col">
+    <div class="col-sm-12 col-lg-9">
       <div class="form-group">
         <input type="text" class="form-control w-50" id="search" aria-describedby="searchHelp" placeholder="Search" [(ngModel)]="search">
-        <small id="searchHelp" class="form-text text-muted">Search for Users by Class Name, Full Name, Email or Phone Number</small>
+      <small id="searchHelp" class="form-text text-muted">Search for Users by Class Name, Full Name, Email or Phone Number</small>
       </div>
     </div>
-    <div class="form-group">
-      <button class="btn btn-danger mb-4" type="button" (click)="open(content)">Add Users</button>
+    <div class="col">
+      <div class="form-group d-sm-flex justify-content-end">
+        <button class="btn btn-danger mb-4" type="button" (click)="open(content)">Add Users</button>
+      </div>
     </div>
   </div>
   <div class="row">
@@ -199,3 +201,16 @@
     </div>
   </ng-template>
 </div>
+
+
+<!-- <div class="row">
+  <div class="col">
+    <div class="form-group">
+      <input type="text" class="form-control w-50" id="search" aria-describedby="searchHelp" placeholder="Search" [(ngModel)]="search">
+      <small id="searchHelp" class="form-text text-muted">Search for Users by Class Name, Full Name, Email or Phone Number</small>
+    </div>
+  </div>
+  <div class="form-group">
+    <button class="btn btn-danger mb-4" type="button" (click)="open(content)">Add Users</button>
+  </div>
+</div> -->
