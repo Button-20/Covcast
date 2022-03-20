@@ -89,3 +89,18 @@ export class UserService {
       return false;
   }
 }
+
+// async login(authCredentials){
+//   return await new Promise(async (resolve, reject) => {
+//     try {
+//       const resp: any = await this.http.post(environment.apiBaseUrl + '/authenticate', authCredentials, this.noAuthHeader);
+//       if (resp.error) throw new Error(resp.error || resp);
+
+//       // console.log(resp)
+//       resolve(resp)
+//     } catch (ex: any) {
+//         console.log(ex)
+//         reject({ error: ex.error || ex.message || ex })
+//     }
+//   })
+// }
